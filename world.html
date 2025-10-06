@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World - NeuroConnect</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-purple: #6B46C1;
+            --primary-blue: #3B82F6;
+            --glass-white: rgba(255, 255, 255, 0.1);
+            --blur-amount: 20px;
+            --transition-speed: 0.3s;
+        }
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        body.rtl {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .glass-effect {
+            background: var(--glass-white);
+            backdrop-filter: blur(var(--blur-amount));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(107, 70, 193, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6B46C1, #3B82F6);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(107, 70, 193, 0.4);
+        }
+        
+        .world-header {
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            min-height: 400px;
+        }
+        
+        .world-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.8), rgba(59, 130, 246, 0.8));
+        }
+        
+        .world-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .member-avatar:hover {
+            transform: scale(1.1);
+            border-color: var(--primary-purple);
+        }
+        
+        .post-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(107, 70, 193, 0.2);
+        }
+        
+        .ai-bot-message {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(59, 130, 246, 0.1));
+            border-left: 4px solid var(--primary-purple);
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+        }
+        
+        .sidebar {
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .stats-chart {
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0.75rem;
+            padding: 1rem;
+        }
+        
+        .world-rule {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--primary-purple);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(107, 70, 193, 0.6);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0; }
+            50% { transform: translateY(-20px) translateX(10px); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Navigation Header -->
+    <nav class="glass-effect fixed top-0 left-0 right-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-lg">N</span>
+                </div>
+                <h1 class="text-xl font-bold gradient-text">NeuroConnect</h1>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navHome">Home</a>
+                <a href="explore.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navExplore">Explore AI</a>
+                <a href="worlds.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navWorlds">Worlds</a>
+                <a href="profile.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navProfile">Profile</a>
+                <a href="dashboard.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navDashboard">AI Dashboard</a>
+            </div>
+            
+            <!-- Right Side Actions -->
+            <div class="flex items-center space-x-4">
+                <!-- Language Toggle -->
+                <button id="languageToggle" class="glass-effect px-3 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                    <span class="text-sm font-medium">EN/AR</span>
+                </button>
+                
+                <!-- AI Assistant -->
+                <button id="aiAssistant" class="glass-effect p-2 rounded-lg hover:bg-white/20 transition-colors relative">
+                    <img src="resources/ai-assistant.png" alt="AI Assistant" class="w-6 h-6 ai-pulse">
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                </button>
+                
+                <!-- Leave World Button -->
+                <button id="leaveWorldBtn" class="glass-effect px-4 py-2 rounded-lg hover:bg-white/20 transition-colors text-red-400" data-translate="leaveWorld">Leave World</button>
+                
+                <!-- User Avatar -->
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-purple-500">
+                    <img src="resources/avatar-1.jpg" alt="User" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- World Header -->
+    <section class="world-header pt-24" id="worldHeader">
+        <div class="floating-particles" id="floatingParticles"></div>
+        <div class="world-content px-6 py-16">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row items-start justify-between">
+                    <div class="mb-6 md:mb-0">
+                        <h1 class="text-4xl md:text-6xl font-bold mb-4" id="worldName">Tech Innovators</h1>
+                        <p class="text-xl text-white/90 max-w-2xl mb-6" id="worldDescription">
+                            Exploring the latest in AI and emerging technologies. Join us to discuss innovations, share insights, and shape the future of technology.
+                        </p>
+                        <div class="flex items-center space-x-6 text-white/80">
+                            <div class="flex items-center space-x-2">
+                                <span>👥</span>
+                                <span id="memberCount">15,420 members</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span>📝</span>
+                                <span id="postCount">3,847 posts</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span>🌐</span>
+                                <span id="worldCategory">Technology</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col space-y-4">
+                        <button id="joinWorldBtn" class="btn-primary px-8 py-3 rounded-lg font-semibold text-lg" onclick="toggleWorldMembership()">
+                            Join World
+                        </button>
+                        <div class="flex items-center space-x-4 text-sm text-white/70">
+                            <span>🔒 Private World</span>
+                            <span>•</span>
+                            <span>🤖 AI Moderated</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <main class="content-grid">
+        <!-- Main Content Area -->
+        <section class="space-y-6">
+            <!-- Post Creation -->
+            <div class="glass-card rounded-xl p-6">
+                <div class="flex items-center space-x-4 mb-4">
+                    <img src="resources/avatar-1.jpg" alt="You" class="w-12 h-12 rounded-full">
+                    <div class="flex-1">
+                        <textarea 
+                            id="worldPostInput"
+                            class="w-full bg-white/10 border border-white/20 rounded-lg p-3 text-white placeholder-gray-400 resize-none focus:outline-none focus:border-purple-500"
+                            rows="3"
+                            placeholder="Share your thoughts with the community..."
+                            data-translate="shareWithCommunity"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex space-x-2">
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Add Image">📷</button>
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Add Video">🎥</button>
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Add Poll">📊</button>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="generateAIPost()" class="glass-effect px-4 py-2 rounded-lg hover:bg-white/20 transition-colors text-sm" data-translate="generateWithAI">
+                            ✨ Generate with AI
+                        </button>
+                        <button onclick="postToWorld()" class="btn-primary px-6 py-2 rounded-lg font-medium" data-translate="post">Post</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Bot Assistant -->
+            <div class="ai-bot-message rounded-xl p-6">
+                <div class="flex items-start space-x-4">
+                    <img src="resources/ai-assistant.png" alt="AI Bot" class="w-10 h-10 rounded-full">
+                    <div class="flex-1">
+                        <h4 class="font-semibold mb-2 text-purple-400">World AI Assistant</h4>
+                        <p class="text-gray-300 text-sm mb-3">
+                            Hello! I'm here to help you navigate this world. I can answer questions about the community, suggest relevant content, and help you connect with other members.
+                        </p>
+                        <div class="flex space-x-2">
+                            <button onclick="askAIBot('trending')" class="text-xs bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full hover:bg-purple-500/30 transition-colors">What's trending?</button>
+                            <button onclick="askAIBot('members')" class="text-xs bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full hover:bg-blue-500/30 transition-colors">Active members</button>
+                            <button onclick="askAIBot('rules')" class="text-xs bg-green-500/20 text-green-300 px-3 py-1 rounded-full hover:bg-green-500/30 transition-colors">Community rules</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- World Posts -->
+            <div id="worldPosts" class="space-y-6">
+                <!-- Posts will be dynamically loaded here -->
+            </div>
+        </section>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar space-y-6">
+            <!-- World Stats -->
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text" data-translate="worldStats">World Statistics</h3>
+                <div class="stats-chart" id="worldStatsChart"></div>
+                <div class="grid grid-cols-2 gap-4 mt-4 text-center">
+                    <div class="bg-white/5 rounded-lg p-3">
+                        <div class="text-2xl font-bold gradient-text">15.4K</div>
+                        <div class="text-sm text-gray-400">Members</div>
+                    </div>
+                    <div class="bg-white/5 rounded-lg p-3">
+                        <div class="text-2xl font-bold gradient-text">3.8K</div>
+                        <div class="text-sm text-gray-400">Posts</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Community Rules -->
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text" data-translate="communityRules">Community Rules</h3>
+                <div class="space-y-2">
+                    <div class="world-rule">
+                        <p class="text-sm">🤝 Be respectful and constructive in discussions</p>
+                    </div>
+                    <div class="world-rule">
+                        <p class="text-sm">💡 Share valuable insights and original content</p>
+                    </div>
+                    <div class="world-rule">
+                        <p class="text-sm">🔍 No spam or self-promotion without context</p>
+                    </div>
+                    <div class="world-rule">
+                        <p class="text-sm">🤖 AI-generated content should be clearly labeled</p>
+                    </div>
+                    <div class="world-rule">
+                        <p class="text-sm">🎯 Stay on topic and contribute meaningfully</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Active Members -->
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text">Active Members</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <img src="resources/avatar-1.jpg" alt="Member" class="member-avatar">
+                        <div class="flex-1">
+                            <p class="font-medium text-sm">Sarah Chen</p>
+                            <p class="text-xs text-gray-400">World Creator</p>
+                        </div>
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <img src="resources/avatar-2.jpg" alt="Member" class="member-avatar">
+                        <div class="flex-1">
+                            <p class="font-medium text-sm">Alex Rivera</p>
+                            <p class="text-xs text-gray-400">AI Researcher</p>
+                        </div>
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <img src="resources/avatar-3.jpg" alt="Member" class="member-avatar">
+                        <div class="flex-1">
+                            <p class="font-medium text-sm">Jordan Kim</p>
+                            <p class="text-xs text-gray-400">Tech Enthusiast</p>
+                        </div>
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-white/10">
+                    <button class="w-full text-sm text-purple-400 hover:text-purple-300 text-center" onclick="viewAllMembers()">
+                        View all members →
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Related Worlds -->
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text">Related Worlds</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3 cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-colors" onclick="navigateToWorld('creative-studio')">
+                        <img src="resources/world-2.jpg" alt="World" class="w-12 h-12 rounded-lg object-cover">
+                        <div class="flex-1">
+                            <p class="font-medium text-sm">Creative Studio</p>
+                            <p class="text-xs text-gray-400">8,930 members</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-colors" onclick="navigateToWorld('future-thinkers')">
+                        <img src="resources/world-6.jpg" alt="World" class="w-12 h-12 rounded-lg object-cover">
+                        <div class="flex-1">
+                            <p class="font-medium text-sm">Future Thinkers</p>
+                            <p class="text-xs text-gray-400">9,870 members</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-colors" onclick="navigateToWorld('startup-network')">
+                        <img src="resources/world-5.jpg" alt="World" class="w-12 h-12 rounded-lg object-cover">
+                        <div class="flex-1">
+                            <p class="font-medium text-sm">Startup Network</p>
+                            <p class="text-xs text-gray-400">12,450 members</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+    
+    <!-- AI Chat Container -->
+    <div id="aiChatContainer" class="fixed bottom-6 right-6 w-80 h-96 glass-card rounded-xl p-4 hidden z-40">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+                <img src="resources/ai-assistant.png" alt="AI" class="w-8 h-8 rounded-full">
+                <h4 class="font-semibold" data-translate="aiAssistant">AI Assistant</h4>
+            </div>
+            <button onclick="AIPoweredSocial.toggleAIChat()" class="text-gray-400 hover:text-white">✕</button>
+        </div>
+        <div id="aiChatMessages" class="h-64 overflow-y-auto mb-4 space-y-2">
+            <!-- Chat messages will be added here -->
+        </div>
+        <div class="flex space-x-2">
+            <input 
+                type="text" 
+                id="chatInput"
+                class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-500"
+                placeholder="Ask me anything..."
+            >
+            <button class="btn-primary px-4 py-2 rounded-lg text-sm">Send</button>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="glass-effect mt-16 py-8 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-3 mb-4">
+                <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold">N</span>
+                </div>
+                <h3 class="text-lg font-bold gradient-text">NeuroConnect</h3>
+            </div>
+            <p class="text-gray-400 text-sm">
+                © 2024 NeuroConnect. Where communities thrive through intelligent connections.
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="main.js"></script>
+    <script>
+        let isMember = false;
+        let worldData = null;
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeWorldPage();
+            setupEventListeners();
+            loadWorldData();
+            loadWorldPosts();
+            createFloatingParticles();
+            initializeStatsChart();
+        });
+        
+        function initializeWorldPage() {
+            // Get world ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const worldId = urlParams.get('id') || 'tech-innovators';
+            
+            // Find world data
+            worldData = AIPoweredSocial.mockData.worlds.find(w => 
+                w.id === worldId || w.name.toLowerCase().replace(/\s+/g, '-') === worldId
+            ) || AIPoweredSocial.mockData.worlds[0];
+            
+            // Initialize AI chat
+            AIPoweredSocial.initializeAIChat();
+        }
+        
+        function setupEventListeners() {
+            // Post input
+            document.getElementById('worldPostInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    postToWorld();
+                }
+            });
+        }
+        
+        function loadWorldData() {
+            if (!worldData) return;
+            
+            // Update header
+            document.getElementById('worldName').textContent = worldData.name;
+            document.getElementById('worldDescription').textContent = worldData.description;
+            document.getElementById('memberCount').textContent = `${AIPoweredSocial.formatNumber(worldData.members)} members`;
+            document.getElementById('postCount').textContent = `${AIPoweredSocial.formatNumber(worldData.posts)} posts`;
+            document.getElementById('worldCategory').textContent = worldData.category;
+            
+            // Update header background
+            const header = document.getElementById('worldHeader');
+            header.style.backgroundImage = `url('${worldData.image}')`;
+        }
+        
+        function loadWorldPosts() {
+            const posts = [
+                {
+                    id: 1,
+                    userId: 1,
+                    content: 'Just released a new AI model that can generate code from natural language descriptions! The implications for developer productivity are incredible. What do you all think about the future of AI-assisted development?',
+                    image: 'resources/content-1.jpg',
+                    likes: 234,
+                    comments: 45,
+                    shares: 12,
+                    timestamp: '2 hours ago',
+                    aiScore: 0.95,
+                    tags: ['AI', 'Development', 'Innovation'],
+                    worldId: worldData.id
+                },
+                {
+                    id: 2,
+                    userId: 2,
+                    content: 'Working on a neural network that can predict market trends with 87% accuracy. The key was training it on both historical data and real-time social sentiment. Fascinating how emotions affect markets!',
+                    image: 'resources/content-2.jpg',
+                    likes: 189,
+                    comments: 67,
+                    shares: 23,
+                    timestamp: '4 hours ago',
+                    aiScore: 0.87,
+                    tags: ['AI', 'Finance', 'Prediction'],
+                    worldId: worldData.id
+                },
+                {
+                    id: 3,
+                    userId: 3,
+                    content: 'The ethical implications of AI are becoming more important every day. How do we ensure AI systems align with human values while maintaining innovation speed? Would love to hear your thoughts.',
+                    image: null,
+                    likes: 156,
+                    comments: 89,
+                    shares: 34,
+                    timestamp: '6 hours ago',
+                    aiScore: 0.92,
+                    tags: ['AI', 'Ethics', 'Discussion'],
+                    worldId: worldData.id
+                }
+            ];
+            
+            const container = document.getElementById('worldPosts');
+            container.innerHTML = '';
+            
+            posts.forEach((post, index) => {
+                const user = AIPoweredSocial.mockData.users.find(u => u.id === post.userId);
+                const postElement = createPostElement(post, user);
+                container.appendChild(postElement);
+                
+                // Animate appearance
+                setTimeout(() => {
+                    if (typeof anime !== 'undefined') {
+                        anime({
+                            targets: postElement,
+                            opacity: [0, 1],
+                            translateY: [30, 0],
+                            duration: 600,
+                            easing: 'easeOutQuart'
+                        });
+                    }
+                }, index * 200);
+            });
+        }
+        
+        function createPostElement(post, user) {
+            const postDiv = document.createElement('div');
+            postDiv.className = 'glass-card rounded-xl p-6 post-card';
+            
+            postDiv.innerHTML = `
+                <div class="flex items-start space-x-4 mb-4">
+                    <img src="${user.avatar}" alt="${user.name}" class="w-12 h-12 rounded-full">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <h4 class="font-semibold">${user.name}</h4>
+                            <span class="text-sm text-gray-400">${post.timestamp}</span>
+                        </div>
+                        <div class="flex space-x-2 mb-2">
+                            ${post.tags.map(tag => `<span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-gray-400">AI Score</div>
+                        <div class="text-sm font-medium gradient-text">${post.aiScore}</div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-gray-200 mb-4">${post.content}</p>
+                    ${post.image ? `<img src="${post.image}" alt="Post content" class="w-full rounded-lg mb-4">` : ''}
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-6">
+                        <button class="flex items-center space-x-2 hover:text-purple-400 transition-colors">
+                            <span>❤️</span>
+                            <span class="text-sm">${AIPoweredSocial.formatNumber(post.likes)}</span>
+                        </button>
+                        <button class="flex items-center space-x-2 hover:text-blue-400 transition-colors">
+                            <span>💬</span>
+                            <span class="text-sm">${AIPoweredSocial.formatNumber(post.comments)}</span>
+                        </button>
+                        <button class="flex items-center space-x-2 hover:text-green-400 transition-colors">
+                            <span>🔄</span>
+                            <span class="text-sm">${AIPoweredSocial.formatNumber(post.shares)}</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="AI Insights">
+                            <span class="text-sm">🤖</span>
+                        </button>
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Save post">
+                            <span class="text-sm">🔖</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return postDiv;
+        }
+        
+        function toggleWorldMembership() {
+            const btn = document.getElementById('joinWorldBtn');
+            const leaveBtn = document.getElementById('leaveWorldBtn');
+            
+            if (!isMember) {
+                // Join world
+                btn.textContent = 'Joined!';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('glass-effect');
+                leaveBtn.classList.remove('hidden');
+                isMember = true;
+                
+                // Show welcome message
+                AIPoweredSocial.addAIMessage(`Welcome to ${worldData.name}! You'll find amazing content and connections here.`);
+                
+                // Update member count
+                const memberCount = document.getElementById('memberCount');
+                const currentCount = parseInt(memberCount.textContent.replace(/[^\d]/g, ''));
+                memberCount.textContent = `${AIPoweredSocial.formatNumber(currentCount + 1)} members`;
+            } else {
+                // Leave world
+                if (confirm('Are you sure you want to leave this world?')) {
+                    btn.textContent = 'Join World';
+                    btn.classList.add('btn-primary');
+                    btn.classList.remove('glass-effect');
+                    leaveBtn.classList.add('hidden');
+                    isMember = false;
+                    
+                    // Update member count
+                    const memberCount = document.getElementById('memberCount');
+                    const currentCount = parseInt(memberCount.textContent.replace(/[^\d]/g, ''));
+                    memberCount.textContent = `${AIPoweredSocial.formatNumber(currentCount - 1)} members`;
+                }
+            }
+        }
+        
+        function postToWorld() {
+            const input = document.getElementById('worldPostInput');
+            const content = input.value.trim();
+            
+            if (!content) return;
+            
+            if (!isMember) {
+                alert('You need to join this world to post content.');
+                return;
+            }
+            
+            // Create new post
+            const newPost = {
+                id: Date.now(),
+                userId: 1, // Current user
+                content: content,
+                image: null,
+                likes: 0,
+                comments: 0,
+                shares: 0,
+                timestamp: 'Just now',
+                aiScore: (Math.random() * 0.5 + 0.5).toFixed(2),
+                tags: ['New'],
+                worldId: worldData.id
+            };
+            
+            const user = AIPoweredSocial.mockData.users.find(u => u.id === 1);
+            const postElement = createPostElement(newPost, user);
+            
+            // Add to top of posts
+            const container = document.getElementById('worldPosts');
+            container.insertBefore(postElement, container.firstChild);
+            
+            // Clear input
+            input.value = '';
+            
+            // Animate new post
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: postElement,
+                    scale: [0.8, 1],
+                    opacity: [0, 1],
+                    duration: 400,
+                    easing: 'easeOutBack'
+                });
+            }
+            
+            // Update post count
+            const postCount = document.getElementById('postCount');
+            const currentCount = parseInt(postCount.textContent.replace(/[^\d]/g, ''));
+            postCount.textContent = `${AIPoweredSocial.formatNumber(currentCount + 1)} posts`;
+            
+            // Show AI feedback
+            AIPoweredSocial.addAIMessage('Great post! Your content has been shared with the community. AI is analyzing engagement patterns to optimize visibility.');
+        }
+        
+        function generateAIPost() {
+            const input = document.getElementById('worldPostInput');
+            const aiSuggestions = [
+                'The intersection of AI and human creativity is fascinating. How do you think AI will change the way we approach creative problem-solving in the next decade?',
+                'Just read about a breakthrough in quantum computing that could revolutionize AI training. The implications for machine learning are mind-blowing!',
+                'What are your thoughts on the ethical implications of AI making autonomous decisions? How do we balance innovation with safety?',
+                'Exploring the latest trends in edge AI and IoT integration. The possibilities for smart cities and connected devices are endless!'
+            ];
+            
+            const randomSuggestion = aiSuggestions[Math.floor(Math.random() * aiSuggestions.length)];
+            input.value = randomSuggestion;
+            
+            // Animate the input
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: input,
+                    scale: [0.98, 1],
+                    duration: 300,
+                    easing: 'easeOutQuart'
+                });
+            }
+            
+            AIPoweredSocial.addAIMessage('I\'ve generated a post suggestion based on trending topics in this world. Feel free to modify it to match your voice!');
+        }
+        
+        function askAIBot(topic) {
+            const responses = {
+                trending: 'Based on recent activity, the most trending topics in this world are: AI ethics discussions, quantum computing breakthroughs, and edge AI applications. Members are particularly engaged with practical AI implementations.',
+                members: 'Currently, there are 47 active members online. Sarah Chen (World Creator) and Alex Rivera (AI Researcher) are leading discussions. The community is most active between 2-4 PM EST.',
+                rules: 'This world focuses on respectful, constructive discussions about technology. Key rules: no spam, stay on topic, share original insights, and label AI-generated content. Violations result in warnings or removal.'
+            };
+            
+            const response = responses[topic] || 'I\'m here to help! What would you like to know about this world?';
+            AIPoweredSocial.addAIMessage(response);
+        }
+        
+        function viewAllMembers() {
+            alert('Member directory would open here (This is a demo)');
+        }
+        
+        function navigateToWorld(worldId) {
+            window.location.href = `world.html?id=${worldId}`;
+        }
+        
+        function createFloatingParticles() {
+            const container = document.getElementById('floatingParticles');
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                container.appendChild(particle);
+            }
+        }
+        
+        function initializeStatsChart() {
+            const chartContainer = document.getElementById('worldStatsChart');
+            const chart = echarts.init(chartContainer);
+            
+            const option = {
+                backgroundColor: 'transparent',
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                    borderColor: 'rgba(107, 70, 193, 0.5)',
+                    textStyle: {
+                        color: '#ffffff'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    axisLine: {
+                        lineStyle: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        }
+                    },
+                    axisLabel: {
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLine: {
+                        lineStyle: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        }
+                    },
+                    axisLabel: {
+                        color: 'rgba(255, 255, 255, 0.7)'
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: 'New Members',
+                        type: 'line',
+                        data: [120, 200, 150, 80, 70, 110, 130],
+                        smooth: true,
+                        lineStyle: {
+                            color: '#6B46C1',
+                            width: 3
+                        },
+                        itemStyle: {
+                            color: '#6B46C1'
+                        },
+                        areaStyle: {
+                            color: {
+                                type: 'linear',
+                                x: 0,
+                                y: 0,
+                                x2: 0,
+                                y2: 1,
+                                colorStops: [
+                                    { offset: 0, color: 'rgba(107, 70, 193, 0.3)' },
+                                    { offset: 1, color: 'rgba(107, 70, 193, 0.05)' }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            };
+            
+            chart.setOption(option);
+            
+            // Resize chart on window resize
+            window.addEventListener('resize', () => {
+                chart.resize();
+            });
+        }
+    </script>
+</body>
+</html>

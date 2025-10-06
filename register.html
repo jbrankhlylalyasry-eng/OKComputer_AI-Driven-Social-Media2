@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - NeuroConnect</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-purple: #6B46C1;
+            --primary-blue: #3B82F6;
+            --glass-white: rgba(255, 255, 255, 0.1);
+            --blur-amount: 20px;
+            --transition-speed: 0.3s;
+        }
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        body.rtl {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .glass-effect {
+            background: var(--glass-white);
+            backdrop-filter: blur(var(--blur-amount));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6B46C1, #3B82F6);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(107, 70, 193, 0.4);
+        }
+        
+        .form-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(107, 70, 193, 0.1);
+        }
+        
+        .interest-tag {
+            background: rgba(107, 70, 193, 0.2);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .interest-tag:hover {
+            background: rgba(107, 70, 193, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .interest-tag.selected {
+            background: linear-gradient(135deg, #6B46C1, #3B82F6);
+            border-color: transparent;
+        }
+        
+        .step-indicator {
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .step-indicator.active {
+            background: linear-gradient(135deg, #6B46C1, #3B82F6);
+        }
+        
+        .step-indicator.completed {
+            background: linear-gradient(135deg, #10B981, #059669);
+        }
+        
+        .avatar-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .avatar-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .avatar-option.selected {
+            border: 3px solid var(--primary-purple);
+            transform: scale(1.1);
+        }
+        
+        .ai-suggestion {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(59, 130, 246, 0.1));
+            border-left: 4px solid var(--primary-purple);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-purple), var(--primary-blue));
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Navigation -->
+    <nav class="glass-effect fixed top-0 left-0 right-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-lg">N</span>
+                </div>
+                <h1 class="text-xl font-bold gradient-text">NeuroConnect</h1>
+            </div>
+            
+            <!-- Right Side Actions -->
+            <div class="flex items-center space-x-4">
+                <button id="languageToggle" class="glass-effect px-3 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                    <span class="text-sm font-medium">EN/AR</span>
+                </button>
+                <a href="login.html" class="glass-effect px-4 py-2 rounded-lg hover:bg-white/20 transition-colors" data-translate="login">Login</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Registration Container -->
+    <main class="min-h-screen flex items-center justify-center pt-24 pb-12 px-6">
+        <div class="max-w-4xl w-full">
+            <!-- Progress Indicator -->
+            <div class="mb-8">
+                <div class="flex items-center justify-center space-x-4 mb-4">
+                    <div class="step-indicator active w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" data-step="1">1</div>
+                    <div class="w-16 h-1 bg-white/20 rounded"></div>
+                    <div class="step-indicator w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" data-step="2">2</div>
+                    <div class="w-16 h-1 bg-white/20 rounded"></div>
+                    <div class="step-indicator w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" data-step="3">3</div>
+                    <div class="w-16 h-1 bg-white/20 rounded"></div>
+                    <div class="step-indicator w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" data-step="4">4</div>
+                </div>
+                <div class="w-full bg-white/20 rounded-full h-2">
+                    <div id="progressBar" class="progress-bar h-2 rounded-full" style="width: 25%"></div>
+                </div>
+            </div>
+            
+            <!-- Registration Form -->
+            <div class="glass-card rounded-2xl p-8">
+                <!-- Step 1: Basic Information -->
+                <div id="step1" class="registration-step">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold gradient-text mb-4" data-translate="welcomeToNeuroConnect">Welcome to NeuroConnect</h2>
+                        <p class="text-gray-300 text-lg" data-translate="createYourAccount">Create your intelligent social profile</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-2" data-translate="fullName">Full Name</label>
+                            <input type="text" id="fullName" class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" placeholder="Enter your full name">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2" data-translate="username">Username</label>
+                            <input type="text" id="username" class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" placeholder="Choose a unique username">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2" data-translate="email">Email Address</label>
+                            <input type="email" id="email" class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" placeholder="your@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2" data-translate="password">Password</label>
+                            <input type="password" id="password" class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 focus:outline-none" placeholder="Create a strong password">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <label class="block text-sm font-medium mb-2" data-translate="aiBio">AI-Generated Bio (Optional)</label>
+                        <textarea id="aiBio" class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 focus:outline-none resize-none" rows="3" placeholder="Let AI create a compelling bio for you, or write your own..."></textarea>
+                        <button onclick="generateAIBio()" class="mt-2 text-purple-400 hover:text-purple-300 text-sm font-medium">✨ Generate with AI</button>
+                    </div>
+                    
+                    <div class="mt-8 flex justify-end">
+                        <button onclick="nextStep(2)" class="btn-primary px-8 py-3 rounded-lg font-semibold" data-translate="continue">Continue</button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Avatar & Interests -->
+                <div id="step2" class="registration-step hidden">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold gradient-text mb-4" data-translate="personalizeProfile">Personalize Your Profile</h2>
+                        <p class="text-gray-300 text-lg" data-translate="chooseAvatarAndInterests">Choose your avatar and interests</p>
+                    </div>
+                    
+                    <!-- Avatar Selection -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold mb-4" data-translate="chooseAvatar">Choose Your Avatar</h3>
+                        <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
+                            <div class="avatar-option w-20 h-20 rounded-full overflow-hidden border-2 border-transparent" onclick="selectAvatar(this, 'resources/avatar-1.jpg')">
+                                <img src="resources/avatar-1.jpg" alt="Avatar 1" class="w-full h-full object-cover">
+                            </div>
+                            <div class="avatar-option w-20 h-20 rounded-full overflow-hidden border-2 border-transparent" onclick="selectAvatar(this, 'resources/avatar-2.jpg')">
+                                <img src="resources/avatar-2.jpg" alt="Avatar 2" class="w-full h-full object-cover">
+                            </div>
+                            <div class="avatar-option w-20 h-20 rounded-full overflow-hidden border-2 border-transparent" onclick="selectAvatar(this, 'resources/avatar-3.jpg')">
+                                <img src="resources/avatar-3.jpg" alt="Avatar 3" class="w-full h-full object-cover">
+                            </div>
+                            <div class="avatar-option w-20 h-20 rounded-full overflow-hidden border-2 border-transparent bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center" onclick="selectAvatar(this, 'ai-generated')">
+                                <span class="text-white text-sm font-bold">AI</span>
+                            </div>
+                            <div class="avatar-option w-20 h-20 rounded-full overflow-hidden border-2 border-transparent bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center" onclick="selectAvatar(this, 'custom')">
+                                <span class="text-white text-sm">📷</span>
+                            </div>
+                            <div class="avatar-option w-20 h-20 rounded-full overflow-hidden border-2 border-transparent bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center" onclick="selectAvatar(this, 'generate')">
+                                <span class="text-white text-sm">🎨</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Interest Selection -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold mb-4" data-translate="selectInterests">Select Your Interests</h3>
+                        <p class="text-gray-400 text-sm mb-4" data-translate="aiWillRecommend">AI will use these to recommend content and connections</p>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                            <div class="interest-tag px-4 py-3 rounded-lg text-center" data-interest="ai" onclick="toggleInterest(this)">
+                                <div class="text-2xl mb-1">🤖</div>
+                                <div class="text-sm font-medium">AI & Tech</div>
+                            </div>
+                            <div class="interest-tag px-4 py-3 rounded-lg text-center" data-interest="art" onclick="toggleInterest(this)">
+                                <div class="text-2xl mb-1">🎨</div>
+                                <div class="text-sm font-medium">Digital Art</div>
+                            </div>
+                            <div class="interest-tag px-4 py-3 rounded-lg text-center" data-interest="gaming" onclick="toggleInterest(this)">
+                                <div class="text-2xl mb-1">🎮</div>
+                                <div class="text-sm font-medium">Gaming</div>
+                            </div>
+                            <div class="interest-tag px-4 py-3 rounded-lg text-center" data-interest="business" onclick="toggleInterest(this)">
+                                <div class="text-2xl mb-1">💼</div>
+                                <div class="text-sm font-medium">Business</div>
+                            </div>
+                            <div class="interest-tag px-4 py-3 rounded-lg text-center" data-interest="science" onclick="toggleInterest(this)">
+                                <div class="text-2xl mb-1">🔬</div>
+                                <div class="text-sm font-medium">Science</div>
+                            </div>
+                            <div class="interest-tag px-4 py-3 rounded-lg text-center" data-interest="music" onclick="toggleInterest(this)">
+                                <div class="text-2xl mb-1">🎵</div>
+                                <div class="text-sm font-medium">Music</div>
+                            </div>
+                            <div class="interest-tag px-4 py-3 rounded-lg text-center" data-interest="travel" onclick="toggleInterest(this)">
+                                <div class="text-2xl mb-1">✈️</div>
+                                <div class="text-sm font-medium">Travel</div>
+                            </div>
+                            <div class="interest-tag px-4 py-3 rounded-lg text-center" data-interest="fitness" onclick="toggleInterest(this)">
+                                <div class="text-2xl mb-1">💪</div>
+                                <div class="text-sm font-medium">Fitness</div>
+                            </div>
+                            <div class="interest-tag px-4 py-3 rounded-lg text-center" data-interest="cooking" onclick="toggleInterest(this)">
+                                <div class="text-2xl mb-1">👨‍🍳</div>
+                                <div class="text-sm font-medium">Cooking</div>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-suggestion p-4 rounded-lg">
+                            <p class="text-sm text-gray-300">
+                                <span class="font-medium text-purple-400">AI Suggestion:</span> 
+                                Based on your selections, we recommend also exploring <span class="font-medium text-blue-400">#FutureTech</span> and <span class="font-medium text-blue-400">#Innovation</span> worlds.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button onclick="prevStep(1)" class="glass-effect px-6 py-3 rounded-lg hover:bg-white/20 transition-colors" data-translate="back">Back</button>
+                        <button onclick="nextStep(3)" class="btn-primary px-8 py-3 rounded-lg font-semibold" data-translate="continue">Continue</button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: AI Customization -->
+                <div id="step3" class="registration-step hidden">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold gradient-text mb-4" data-translate="aiCustomization">AI Customization</h2>
+                        <p class="text-gray-300 text-lg" data-translate="chooseAiLevel">Choose how much AI assistance you want</p>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <!-- AI Level Selection -->
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <div class="ai-level-card glass-effect p-6 rounded-xl cursor-pointer" data-level="basic" onclick="selectAILevel(this, 'basic')">
+                                <div class="text-center">
+                                    <div class="text-4xl mb-4">🌱</div>
+                                    <h3 class="text-lg font-semibold mb-2" data-translate="basic">Basic</h3>
+                                    <p class="text-sm text-gray-400 mb-4">Minimal AI assistance, traditional social media experience</p>
+                                    <ul class="text-xs text-gray-300 space-y-1 text-left">
+                                        <li>• Basic content recommendations</li>
+                                        <li>• Simple friend suggestions</li>
+                                        <li>• Manual content creation</li>
+                                        <li>• Standard feed algorithm</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-level-card glass-effect p-6 rounded-xl cursor-pointer border-2 border-purple-500" data-level="balanced" onclick="selectAILevel(this, 'balanced')">
+                                <div class="text-center">
+                                    <div class="text-4xl mb-4">⚖️</div>
+                                    <h3 class="text-lg font-semibold mb-2" data-translate="balanced">Balanced</h3>
+                                    <p class="text-sm text-gray-400 mb-4">Perfect balance of AI assistance and human control</p>
+                                    <ul class="text-xs text-gray-300 space-y-1 text-left">
+                                        <li>• Smart content curation</li>
+                                        <li>• AI-powered friend matching</li>
+                                        <li>• Content creation assistance</li>
+                                        <li>• Intelligent feed optimization</li>
+                                    </ul>
+                                    <div class="mt-4 text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded">Recommended</div>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-level-card glass-effect p-6 rounded-xl cursor-pointer" data-level="advanced" onclick="selectAILevel(this, 'advanced')">
+                                <div class="text-center">
+                                    <div class="text-4xl mb-4">🚀</div>
+                                    <h3 class="text-lg font-semibold mb-2" data-translate="advanced">Advanced</h3>
+                                    <p class="text-sm text-gray-400 mb-4">Maximum AI assistance for power users</p>
+                                    <ul class="text-xs text-gray-300 space-y-1 text-left">
+                                        <li>• Hyper-personalized content</li>
+                                        <li>• Advanced AI analytics</li>
+                                        <li>• Automated content creation</li>
+                                        <li>• Predictive insights</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Privacy Settings -->
+                        <div class="glass-effect p-6 rounded-xl">
+                            <h3 class="text-lg font-semibold mb-4" data-translate="privacySettings">Privacy & Data Settings</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">AI Learning from Your Data</p>
+                                        <p class="text-sm text-gray-400">Allow AI to learn from your activity to improve recommendations</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Personalized Advertising</p>
+                                        <p class="text-sm text-gray-400">Show relevant ads based on your interests</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">AI Content Moderation</p>
+                                        <p class="text-sm text-gray-400">Use AI to filter inappropriate content</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between mt-8">
+                        <button onclick="prevStep(2)" class="glass-effect px-6 py-3 rounded-lg hover:bg-white/20 transition-colors" data-translate="back">Back</button>
+                        <button onclick="nextStep(4)" class="btn-primary px-8 py-3 rounded-lg font-semibold" data-translate="continue">Continue</button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: World Recommendations -->
+                <div id="step4" class="registration-step hidden">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold gradient-text mb-4" data-translate="joinYourFirstWorlds">Join Your First Worlds</h2>
+                        <p class="text-gray-300 text-lg" data-translate="aiRecommendedCommunities">AI has found perfect communities for you</p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="world-recommendation glass-effect p-6 rounded-xl">
+                            <img src="resources/world-1.jpg" alt="World" class="w-full h-32 object-cover rounded-lg mb-4">
+                            <h3 class="text-lg font-semibold mb-2">Tech Innovators</h3>
+                            <p class="text-sm text-gray-400 mb-4">15,420 members • Technology Focus</p>
+                            <p class="text-sm text-gray-300 mb-4">Perfect for your interest in AI and emerging technologies. Active discussions about the latest innovations.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded">98% Match</span>
+                                <button class="btn-primary px-4 py-2 rounded-lg text-sm" onclick="toggleWorldJoin(this)">Join World</button>
+                            </div>
+                        </div>
+                        
+                        <div class="world-recommendation glass-effect p-6 rounded-xl">
+                            <img src="resources/world-2.jpg" alt="World" class="w-full h-32 object-cover rounded-lg mb-4">
+                            <h3 class="text-lg font-semibold mb-2">Creative Studio</h3>
+                            <p class="text-sm text-gray-400 mb-4">8,930 members • Arts & Design</p>
+                            <p class="text-sm text-gray-300 mb-4">Great for digital artists and creative professionals. Share your work and get inspired by others.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded">94% Match</span>
+                                <button class="btn-primary px-4 py-2 rounded-lg text-sm" onclick="toggleWorldJoin(this)">Join World</button>
+                            </div>
+                        </div>
+                        
+                        <div class="world-recommendation glass-effect p-6 rounded-xl">
+                            <img src="resources/world-6.jpg" alt="World" class="w-full h-32 object-cover rounded-lg mb-4">
+                            <h3 class="text-lg font-semibold mb-2">Future Thinkers</h3>
+                            <p class="text-sm text-gray-400 mb-4">9,870 members • Science & Philosophy</p>
+                            <p class="text-sm text-gray-300 mb-4">Discuss the future of humanity, technology, and society. Deep conversations await.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded">91% Match</span>
+                                <button class="btn-primary px-4 py-2 rounded-lg text-sm" onclick="toggleWorldJoin(this)">Join World</button>
+                            </div>
+                        </div>
+                        
+                        <div class="world-recommendation glass-effect p-6 rounded-xl">
+                            <img src="resources/world-5.jpg" alt="World" class="w-full h-32 object-cover rounded-lg mb-4">
+                            <h3 class="text-lg font-semibold mb-2">Startup Network</h3>
+                            <p class="text-sm text-gray-400 mb-4">12,450 members • Entrepreneurship</p>
+                            <p class="text-sm text-gray-300 mb-4">Connect with entrepreneurs and innovators. Perfect for networking and collaboration.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded">87% Match</span>
+                                <button class="btn-primary px-4 py-2 rounded-lg text-sm" onclick="toggleWorldJoin(this)">Join World</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="text-gray-400 text-sm mb-6" data-translate="canJoinMoreLater">You can join more worlds later from the Worlds Marketplace</p>
+                        <div class="flex justify-center space-x-4">
+                            <button onclick="prevStep(3)" class="glass-effect px-6 py-3 rounded-lg hover:bg-white/20 transition-colors" data-translate="back">Back</button>
+                            <button onclick="completeRegistration()" class="btn-primary px-12 py-3 rounded-lg font-semibold text-lg" data-translate="completeRegistration">Complete Registration</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Scripts -->
+    <script src="main.js"></script>
+    <script>
+        let currentStep = 1;
+        let selectedAvatar = null;
+        let selectedInterests = [];
+        let selectedAILevel = 'balanced';
+        let joinedWorlds = [];
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFormValidation();
+            animateStepTransition();
+        });
+        
+        // Step navigation
+        function nextStep(step) {
+            if (validateCurrentStep()) {
+                currentStep = step;
+                showStep(step);
+                updateProgress();
+                animateStepTransition();
+            }
+        }
+        
+        function prevStep(step) {
+            currentStep = step;
+            showStep(step);
+            updateProgress();
+            animateStepTransition();
+        }
+        
+        function showStep(step) {
+            document.querySelectorAll('.registration-step').forEach(el => {
+                el.classList.add('hidden');
+            });
+            document.getElementById(`step${step}`).classList.remove('hidden');
+            
+            // Update step indicators
+            document.querySelectorAll('.step-indicator').forEach((el, index) => {
+                el.classList.remove('active', 'completed');
+                if (index + 1 < step) {
+                    el.classList.add('completed');
+                } else if (index + 1 === step) {
+                    el.classList.add('active');
+                }
+            });
+        }
+        
+        function updateProgress() {
+            const progress = (currentStep / 4) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+        
+        function animateStepTransition() {
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: '.registration-step:not(.hidden)',
+                    opacity: [0, 1],
+                    translateY: [30, 0],
+                    duration: 600,
+                    easing: 'easeOutQuart'
+                });
+            }
+        }
+        
+        // Form validation
+        function setupFormValidation() {
+            const inputs = document.querySelectorAll('#step1 input');
+            inputs.forEach(input => {
+                input.addEventListener('blur', validateField);
+                input.addEventListener('input', clearValidationError);
+            });
+        }
+        
+        function validateField(e) {
+            const field = e.target;
+            const value = field.value.trim();
+            
+            // Remove existing error styling
+            field.classList.remove('border-red-500');
+            
+            // Basic validation
+            let isValid = true;
+            if (field.type === 'email' && value) {
+                isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            } else if (field.type === 'password' && value) {
+                isValid = value.length >= 8;
+            } else if (field.id === 'username' && value) {
+                isValid = value.length >= 3 && /^[a-zA-Z0-9_]+$/.test(value);
+            }
+            
+            if (!isValid && value) {
+                field.classList.add('border-red-500');
+            }
+        }
+        
+        function clearValidationError(e) {
+            e.target.classList.remove('border-red-500');
+        }
+        
+        function validateCurrentStep() {
+            if (currentStep === 1) {
+                const required = ['fullName', 'username', 'email', 'password'];
+                return required.every(id => {
+                    const field = document.getElementById(id);
+                    return field.value.trim() !== '';
+                });
+            } else if (currentStep === 2) {
+                return selectedAvatar !== null;
+            } else if (currentStep === 3) {
+                return selectedAILevel !== null;
+            }
+            return true;
+        }
+        
+        // Avatar selection
+        function selectAvatar(element, avatarType) {
+            document.querySelectorAll('.avatar-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            selectedAvatar = avatarType;
+            
+            if (avatarType === 'ai-generated') {
+                setTimeout(() => {
+                    alert('AI is generating a unique avatar for you! (This is a demo)');
+                }, 500);
+            } else if (avatarType === 'custom') {
+                setTimeout(() => {
+                    alert('Upload your own avatar (This is a demo)');
+                }, 500);
+            } else if (avatarType === 'generate') {
+                setTimeout(() => {
+                    alert('AI will create a custom avatar based on your interests! (This is a demo)');
+                }, 500);
+            }
+        }
+        
+        // Interest selection
+        function toggleInterest(element) {
+            const interest = element.getAttribute('data-interest');
+            
+            if (element.classList.contains('selected')) {
+                element.classList.remove('selected');
+                selectedInterests = selectedInterests.filter(i => i !== interest);
+            } else {
+                element.classList.add('selected');
+                selectedInterests.push(interest);
+            }
+        }
+        
+        // AI Bio generation
+        function generateAIBio() {
+            const fullName = document.getElementById('fullName').value || 'User';
+            const bioTextarea = document.getElementById('aiBio');
+            
+            const bios = [
+                `${fullName} is a passionate innovator exploring the intersection of technology and human connection. Always curious about AI, creativity, and the future of digital communities.`,
+                `Tech enthusiast and creative thinker, ${fullName} loves discovering new ways AI can enhance our social experiences. Join me on this exciting journey!`,
+                `${fullName} believes in the power of intelligent systems to bring people together. Here to learn, share, and grow with this amazing community.`
+            ];
+            
+            const randomBio = bios[Math.floor(Math.random() * bios.length)];
+            bioTextarea.value = randomBio;
+            
+            // Animate the bio appearance
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: bioTextarea,
+                    scale: [0.95, 1],
+                    duration: 300,
+                    easing: 'easeOutQuart'
+                });
+            }
+        }
+        
+        // AI Level selection
+        function selectAILevel(element, level) {
+            document.querySelectorAll('.ai-level-card').forEach(el => {
+                el.classList.remove('border-2', 'border-purple-500');
+            });
+            element.classList.add('border-2', 'border-purple-500');
+            selectedAILevel = level;
+        }
+        
+        // World join toggle
+        function toggleWorldJoin(button) {
+            const worldName = button.closest('.world-recommendation').querySelector('h3').textContent;
+            
+            if (button.textContent === 'Join World') {
+                button.textContent = 'Joined!';
+                button.classList.remove('btn-primary');
+                button.classList.add('glass-effect');
+                joinedWorlds.push(worldName);
+                
+                // Animate button change
+                if (typeof anime !== 'undefined') {
+                    anime({
+                        targets: button,
+                        scale: [1, 1.1, 1],
+                        duration: 400,
+                        easing: 'easeOutBack'
+                    });
+                }
+            } else {
+                button.textContent = 'Join World';
+                button.classList.remove('glass-effect');
+                button.classList.add('btn-primary');
+                joinedWorlds = joinedWorlds.filter(w => w !== worldName);
+            }
+        }
+        
+        // Complete registration
+        function completeRegistration() {
+            // Collect all form data
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                bio: document.getElementById('aiBio').value,
+                avatar: selectedAvatar,
+                interests: selectedInterests,
+                aiLevel: selectedAILevel,
+                joinedWorlds: joinedWorlds
+            };
+            
+            // Simulate registration process
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="glass-card rounded-xl p-8 max-w-md mx-4 text-center">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h2 class="text-2xl font-bold gradient-text mb-4">Welcome to NeuroConnect!</h2>
+                    <p class="text-gray-300 mb-6">Your AI-powered social journey begins now. We're setting up your personalized experience...</p>
+                    <div class="w-full bg-white/20 rounded-full h-2 mb-4">
+                        <div class="progress-bar h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                    <p class="text-sm text-gray-400">AI is customizing your experience...</p>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Animate progress bar
+            const progressBar = modal.querySelector('.progress-bar');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                progressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        modal.remove();
+                        // Redirect to home page
+                        window.location.href = 'index.html';
+                    }, 1000);
+                }
+            }, 200);
+        }
+        
+        // Initialize animations
+        if (typeof anime !== 'undefined') {
+            anime({
+                targets: '.glass-card',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 800,
+                easing: 'easeOutQuart'
+            });
+        }
+    </script>
+</body>
+</html>

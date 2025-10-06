@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore AI - NeuroConnect</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-purple: #6B46C1;
+            --primary-blue: #3B82F6;
+            --glass-white: rgba(255, 255, 255, 0.1);
+            --blur-amount: 20px;
+            --transition-speed: 0.3s;
+        }
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        body.rtl {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .glass-effect {
+            background: var(--glass-white);
+            backdrop-filter: blur(var(--blur-amount));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(107, 70, 193, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6B46C1, #3B82F6);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(107, 70, 193, 0.4);
+        }
+        
+        .search-container {
+            position: relative;
+        }
+        
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            margin-top: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 10;
+        }
+        
+        .emotion-wheel {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+        
+        .emotion-segment {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 2rem;
+        }
+        
+        .emotion-segment:hover {
+            transform: scale(1.1);
+            z-index: 5;
+        }
+        
+        .emotion-segment.selected {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(107, 70, 193, 0.6);
+        }
+        
+        .emotion-joyful { top: 0; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #FCD34D, #F59E0B); }
+        .emotion-inspiring { top: 25%; right: 0; background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+        .emotion-thoughtful { bottom: 25%; right: 0; background: linear-gradient(135deg, #06B6D4, #0891B2); }
+        .emotion-relaxing { bottom: 0; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #10B981, #059669); }
+        .emotion-exciting { bottom: 25%; left: 0; background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .emotion-motivating { top: 25%; left: 0; background: linear-gradient(135deg, #EF4444, #DC2626); }
+        
+        .topic-bubble {
+            background: rgba(107, 70, 193, 0.2);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: absolute;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .topic-bubble:hover {
+            transform: scale(1.1);
+            background: rgba(107, 70, 193, 0.3);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .content-preview {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .content-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(107, 70, 193, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .content-preview:hover::before {
+            left: 100%;
+        }
+        
+        .ai-insights-panel {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(59, 130, 246, 0.1));
+            border-left: 4px solid var(--primary-purple);
+        }
+        
+        .trend-indicator {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .trend-rising {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+        }
+        
+        .trend-falling {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+        }
+        
+        .trend-stable {
+            background: rgba(107, 70, 193, 0.2);
+            color: #6B46C1;
+        }
+        
+        .filter-chip {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .filter-chip:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .filter-chip.active {
+            background: linear-gradient(135deg, #6B46C1, #3B82F6);
+            border-color: transparent;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+        }
+        
+        .explore-header {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(59, 130, 246, 0.1));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Navigation Header -->
+    <nav class="glass-effect fixed top-0 left-0 right-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-lg">N</span>
+                </div>
+                <h1 class="text-xl font-bold gradient-text">NeuroConnect</h1>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navHome">Home</a>
+                <a href="explore.html" class="text-white hover:text-purple-400 transition-colors font-medium" data-translate="navExplore">Explore AI</a>
+                <a href="worlds.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navWorlds">Worlds</a>
+                <a href="profile.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navProfile">Profile</a>
+                <a href="dashboard.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navDashboard">AI Dashboard</a>
+            </div>
+            
+            <!-- Right Side Actions -->
+            <div class="flex items-center space-x-4">
+                <!-- Language Toggle -->
+                <button id="languageToggle" class="glass-effect px-3 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                    <span class="text-sm font-medium">EN/AR</span>
+                </button>
+                
+                <!-- AI Assistant -->
+                <button id="aiAssistant" class="glass-effect p-2 rounded-lg hover:bg-white/20 transition-colors relative">
+                    <img src="resources/ai-assistant.png" alt="AI Assistant" class="w-6 h-6 ai-pulse">
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                </button>
+                
+                <!-- User Avatar -->
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-purple-500">
+                    <img src="resources/avatar-1.jpg" alt="User" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Explore Header -->
+    <section class="explore-header pt-24 pb-8 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-8">
+                <h2 class="text-4xl md:text-5xl font-bold gradient-text mb-4">
+                    <span id="exploreTitle"></span>
+                </h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto" data-translate="discoverContentWithAI">
+                    Discover content tailored to your emotions, interests, and curiosity with advanced AI algorithms
+                </p>
+            </div>
+            
+            <!-- Smart Search Bar -->
+            <div class="max-w-2xl mx-auto">
+                <div class="search-container">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="exploreSearch"
+                            class="w-full bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:bg-white/15 text-lg"
+                            placeholder="Search with emotions, topics, or questions..."
+                            data-translate="searchPlaceholder"
+                        >
+                        <button class="absolute right-4 top-1/2 transform -translate-y-1/2 text-purple-400 hover:text-purple-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="searchSuggestions" class="search-suggestions hidden">
+                        <!-- Dynamic suggestions will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content Grid -->
+    <main class="content-grid">
+        <!-- Left Sidebar - Filters -->
+        <aside class="space-y-6">
+            <!-- Emotional Tone Filter -->
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text" data-translate="emotionalTone">Emotional Tone</h3>
+                <div class="emotion-wheel">
+                    <div class="emotion-segment emotion-joyful" data-emotion="joyful" title="Joyful">😊</div>
+                    <div class="emotion-segment emotion-inspiring" data-emotion="inspiring" title="Inspiring">✨</div>
+                    <div class="emotion-segment emotion-thoughtful" data-emotion="thoughtful" title="Thoughtful">🤔</div>
+                    <div class="emotion-segment emotion-relaxing" data-emotion="relaxing" title="Relaxing">😌</div>
+                    <div class="emotion-segment emotion-exciting" data-emotion="exciting" title="Exciting">🎉</div>
+                    <div class="emotion-segment emotion-motivating" data-emotion="motivating" title="Motivating">💪</div>
+                </div>
+                <div class="text-center mt-4">
+                    <p class="text-sm text-gray-400" id="selectedEmotion">Select an emotion to filter content</p>
+                </div>
+            </div>
+            
+            <!-- Quick Filters -->
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text" data-translate="quickFilters">Quick Filters</h3>
+                <div class="space-y-2">
+                    <div class="filter-chip px-3 py-2 rounded-lg text-sm" data-filter="trending">
+                        🔥 Trending Now
+                    </div>
+                    <div class="filter-chip px-3 py-2 rounded-lg text-sm" data-filter="recent">
+                        🕒 Most Recent
+                    </div>
+                    <div class="filter-chip px-3 py-2 rounded-lg text-sm" data-filter="popular">
+                        ⭐ Most Popular
+                    </div>
+                    <div class="filter-chip px-3 py-2 rounded-lg text-sm" data-filter="ai-enhanced">
+                        🤖 AI Enhanced
+                    </div>
+                    <div class="filter-chip px-3 py-2 rounded-lg text-sm" data-filter="viral">
+                        🚀 Going Viral
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content Types -->
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text" data-translate="contentTypes">Content Types</h3>
+                <div class="space-y-3">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked>
+                        <div class="w-5 h-5 bg-white/20 rounded border border-white/30 peer-checked:bg-purple-600 peer-checked:border-purple-600 transition-all duration-200 flex items-center justify-center">
+                            <svg class="w-3 h-3 text-white hidden peer-checked:block" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-sm">Posts</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked>
+                        <div class="w-5 h-5 bg-white/20 rounded border border-white/30 peer-checked:bg-purple-600 peer-checked:border-purple-600 transition-all duration-200 flex items-center justify-center">
+                            <svg class="w-3 h-3 text-white hidden peer-checked:block" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-sm">Images</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked>
+                        <div class="w-5 h-5 bg-white/20 rounded border border-white/30 peer-checked:bg-purple-600 peer-checked:border-purple-600 transition-all duration-200 flex items-center justify-center">
+                            <svg class="w-3 h-3 text-white hidden peer-checked:block" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-sm">Videos</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer">
+                        <div class="w-5 h-5 bg-white/20 rounded border border-white/30 peer-checked:bg-purple-600 peer-checked:border-purple-600 transition-all duration-200 flex items-center justify-center">
+                            <svg class="w-3 h-3 text-white hidden peer-checked:block" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-3 text-sm">Live Streams</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- AI Insights -->
+            <div class="ai-insights-panel rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4" data-translate="aiInsights">AI Insights</h3>
+                <div class="space-y-4 text-sm">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <div>
+                            <p class="text-gray-300">Content matching your current mood increased engagement by 34%</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <div>
+                            <p class="text-gray-300">3 new trending topics match your interests</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                        <div>
+                            <p class="text-gray-300">Optimal posting time for your audience: 2-4 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="space-y-6">
+            <!-- Topic Explorer -->
+            <div class="glass-card rounded-xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-semibold gradient-text" data-translate="topicExplorer">Topic Explorer</h3>
+                    <button class="text-sm text-purple-400 hover:text-purple-300" onclick="refreshTopics()">🔄 Refresh</button>
+                </div>
+                
+                <div class="relative h-64 bg-gradient-to-br from-purple-900/20 to-blue-900/20 rounded-lg overflow-hidden">
+                    <div class="topic-bubble w-20 h-20" style="top: 20%; left: 15%; animation-delay: 0s;" data-topic="AI">
+                        <span class="text-lg">🤖</span>
+                    </div>
+                    <div class="topic-bubble w-16 h-16" style="top: 60%; left: 25%; animation-delay: 1s;" data-topic="Art">
+                        <span class="text-sm">🎨</span>
+                    </div>
+                    <div class="topic-bubble w-24 h-24" style="top: 30%; left: 70%; animation-delay: 2s;" data-topic="Tech">
+                        <span class="text-lg">💻</span>
+                    </div>
+                    <div class="topic-bubble w-18 h-18" style="top: 70%; left: 65%; animation-delay: 0.5s;" data-topic="Science">
+                        <span class="text-base">🔬</span>
+                    </div>
+                    <div class="topic-bubble w-22 h-22" style="top: 15%; left: 45%; animation-delay: 1.5s;" data-topic="Music">
+                        <span class="text-lg">🎵</span>
+                    </div>
+                    <div class="topic-bubble w-14 h-14" style="top: 50%; left: 85%; animation-delay: 2.5s;" data-topic="Gaming">
+                        <span class="text-sm">🎮</span>
+                    </div>
+                    <div class="topic-bubble w-20 h-20" style="top: 75%; left: 10%; animation-delay: 3s;" data-topic="Business">
+                        <span class="text-lg">💼</span>
+                    </div>
+                    <div class="topic-bubble w-16 h-16" style="top: 40%; left: 90%; animation-delay: 0.8s;" data-topic="Travel">
+                        <span class="text-sm">✈️</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Discovery Results -->
+            <div id="discoveryResults" class="space-y-6">
+                <!-- Results will be populated here -->
+            </div>
+            
+            <!-- Load More Button -->
+            <div class="text-center">
+                <button id="loadMoreBtn" class="glass-effect px-8 py-3 rounded-lg hover:bg-white/20 transition-colors" onclick="loadMoreContent()">
+                    <span data-translate="loadMore">Load More Content</span>
+                </button>
+            </div>
+        </main>
+    </main>
+    
+    <!-- AI Chat Container -->
+    <div id="aiChatContainer" class="fixed bottom-6 right-6 w-80 h-96 glass-card rounded-xl p-4 hidden z-40">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+                <img src="resources/ai-assistant.png" alt="AI" class="w-8 h-8 rounded-full">
+                <h4 class="font-semibold" data-translate="aiAssistant">AI Assistant</h4>
+            </div>
+            <button onclick="AIPoweredSocial.toggleAIChat()" class="text-gray-400 hover:text-white">✕</button>
+        </div>
+        <div id="aiChatMessages" class="h-64 overflow-y-auto mb-4 space-y-2">
+            <!-- Chat messages will be added here -->
+        </div>
+        <div class="flex space-x-2">
+            <input 
+                type="text" 
+                id="chatInput"
+                class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-500"
+                placeholder="Ask me anything..."
+            >
+            <button class="btn-primary px-4 py-2 rounded-lg text-sm">Send</button>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="glass-effect mt-16 py-8 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-3 mb-4">
+                <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold">N</span>
+                </div>
+                <h3 class="text-lg font-bold gradient-text">NeuroConnect</h3>
+            </div>
+            <p class="text-gray-400 text-sm">
+                © 2024 NeuroConnect. AI-powered discovery for meaningful connections.
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="main.js"></script>
+    <script>
+        let selectedEmotion = null;
+        let activeFilters = [];
+        let selectedTopics = [];
+        let currentSearchQuery = '';
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeExplorePage();
+            setupEventListeners();
+            loadDiscoveryResults();
+            animateElements();
+        });
+        
+        function initializeExplorePage() {
+            // Initialize typewriter effect for title
+            const exploreTitle = new Typed('#exploreTitle', {
+                strings: [
+                    'Explore with AI',
+                    'Discover Emotions',
+                    'Find Your Vibe',
+                    'Smart Discovery'
+                ],
+                typeSpeed: 80,
+                backSpeed: 40,
+                backDelay: 2000,
+                loop: true,
+                showCursor: true,
+                cursorChar: '|'
+            });
+            
+            // Initialize AI chat
+            AIPoweredSocial.initializeAIChat();
+        }
+        
+        function setupEventListeners() {
+            // Search functionality
+            const searchInput = document.getElementById('exploreSearch');
+            searchInput.addEventListener('input', handleSearch);
+            searchInput.addEventListener('focus', showSearchSuggestions);
+            searchInput.addEventListener('blur', hideSearchSuggestions);
+            
+            // Emotion wheel
+            document.querySelectorAll('.emotion-segment').forEach(segment => {
+                segment.addEventListener('click', selectEmotion);
+            });
+            
+            // Filter chips
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', toggleFilter);
+            });
+            
+            // Topic bubbles
+            document.querySelectorAll('.topic-bubble').forEach(bubble => {
+                bubble.addEventListener('click', selectTopic);
+            });
+        }
+        
+        function handleSearch(e) {
+            const query = e.target.value.trim();
+            currentSearchQuery = query;
+            
+            if (query.length > 2) {
+                generateSearchSuggestions(query);
+                filterContent();
+            } else {
+                hideSearchSuggestions();
+            }
+        }
+        
+        function showSearchSuggestions() {
+            const suggestions = document.getElementById('searchSuggestions');
+            if (currentSearchQuery.length > 2) {
+                suggestions.classList.remove('hidden');
+            }
+        }
+        
+        function hideSearchSuggestions() {
+            setTimeout(() => {
+                document.getElementById('searchSuggestions').classList.add('hidden');
+            }, 200);
+        }
+        
+        function generateSearchSuggestions(query) {
+            const suggestions = [
+                `Posts about "${query}"`,
+                `People interested in "${query}"`,
+                `Worlds related to "${query}"`,
+                `AI-generated content for "${query}"`,
+                `Trending topics matching "${query}"`
+            ];
+            
+            const suggestionsContainer = document.getElementById('searchSuggestions');
+            suggestionsContainer.innerHTML = suggestions.map(suggestion => 
+                `<div class="suggestion-item p-3 hover:bg-white/10 cursor-pointer border-b border-white/10 last:border-b-0" onclick="selectSuggestion('${suggestion}')">${suggestion}</div>`
+            ).join('');
+        }
+        
+        function selectSuggestion(suggestion) {
+            document.getElementById('exploreSearch').value = suggestion.split('"')[1] || suggestion;
+            hideSearchSuggestions();
+            filterContent();
+        }
+        
+        function selectEmotion(e) {
+            // Remove previous selection
+            document.querySelectorAll('.emotion-segment').forEach(segment => {
+                segment.classList.remove('selected');
+            });
+            
+            // Select new emotion
+            const segment = e.target.closest('.emotion-segment');
+            segment.classList.add('selected');
+            selectedEmotion = segment.getAttribute('data-emotion');
+            
+            // Update emotion text
+            const emotionText = document.getElementById('selectedEmotion');
+            emotionText.textContent = `Filtering by ${selectedEmotion} content`;
+            emotionText.className = 'text-sm text-purple-400';
+            
+            // Animate selection
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: segment,
+                    scale: [1, 1.3, 1.2],
+                    duration: 600,
+                    easing: 'easeOutBack'
+                });
+            }
+            
+            filterContent();
+        }
+        
+        function toggleFilter(e) {
+            const chip = e.target.closest('.filter-chip');
+            const filter = chip.getAttribute('data-filter');
+            
+            if (chip.classList.contains('active')) {
+                chip.classList.remove('active');
+                activeFilters = activeFilters.filter(f => f !== filter);
+            } else {
+                chip.classList.add('active');
+                activeFilters.push(filter);
+            }
+            
+            filterContent();
+        }
+        
+        function selectTopic(e) {
+            const bubble = e.target.closest('.topic-bubble');
+            const topic = bubble.getAttribute('data-topic');
+            
+            if (bubble.classList.contains('selected')) {
+                bubble.classList.remove('selected');
+                selectedTopics = selectedTopics.filter(t => t !== topic);
+            } else {
+                bubble.classList.add('selected');
+                selectedTopics.push(topic);
+            }
+            
+            filterContent();
+        }
+        
+        function filterContent() {
+            // Simulate content filtering
+            const results = generateMockResults();
+            displayResults(results);
+        }
+        
+        function generateMockResults() {
+            const mockResults = [
+                {
+                    id: 1,
+                    type: 'post',
+                    title: 'The Future of AI in Creative Industries',
+                    content: 'Exploring how artificial intelligence is revolutionizing creative workflows and enabling new forms of artistic expression...',
+                    author: 'Sarah Chen',
+                    avatar: 'resources/avatar-1.jpg',
+                    engagement: 1234,
+                    trend: 'rising',
+                    tags: ['AI', 'Creativity', 'Future'],
+                    aiScore: 0.95,
+                    timestamp: '2 hours ago'
+                },
+                {
+                    id: 2,
+                    type: 'image',
+                    title: 'AI-Generated Art Showcase',
+                    image: 'resources/content-1.jpg',
+                    content: 'Stunning visualizations created with neural networks and generative algorithms...',
+                    author: 'Alex Rivera',
+                    avatar: 'resources/avatar-2.jpg',
+                    engagement: 892,
+                    trend: 'stable',
+                    tags: ['Art', 'AI', 'Visual'],
+                    aiScore: 0.87,
+                    timestamp: '4 hours ago'
+                },
+                {
+                    id: 3,
+                    type: 'post',
+                    title: 'Building Ethical AI Systems',
+                    content: 'A deep dive into the principles and practices for developing AI that aligns with human values...',
+                    author: 'Jordan Kim',
+                    avatar: 'resources/avatar-3.jpg',
+                    engagement: 567,
+                    trend: 'rising',
+                    tags: ['Ethics', 'AI', 'Technology'],
+                    aiScore: 0.92,
+                    timestamp: '6 hours ago'
+                }
+            ];
+            
+            return mockResults;
+        }
+        
+        function displayResults(results) {
+            const container = document.getElementById('discoveryResults');
+            container.innerHTML = '';
+            
+            results.forEach((result, index) => {
+                const resultElement = createResultElement(result);
+                container.appendChild(resultElement);
+                
+                // Animate appearance
+                setTimeout(() => {
+                    if (typeof anime !== 'undefined') {
+                        anime({
+                            targets: resultElement,
+                            opacity: [0, 1],
+                            translateY: [30, 0],
+                            duration: 600,
+                            easing: 'easeOutQuart'
+                        });
+                    }
+                }, index * 200);
+            });
+        }
+        
+        function createResultElement(result) {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'glass-card rounded-xl p-6 content-preview';
+            
+            const trendClass = result.trend === 'rising' ? 'trend-rising' : 
+                              result.trend === 'falling' ? 'trend-falling' : 'trend-stable';
+            
+            resultDiv.innerHTML = `
+                <div class="flex items-start space-x-4 mb-4">
+                    <img src="${result.avatar}" alt="${result.author}" class="w-12 h-12 rounded-full">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <h4 class="font-semibold">${result.author}</h4>
+                            <span class="trend-indicator ${trendClass}">${result.trend.toUpperCase()}</span>
+                        </div>
+                        <div class="flex space-x-2 mb-2">
+                            ${result.tags.map(tag => `<span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-gray-400">AI Score</div>
+                        <div class="text-sm font-medium gradient-text">${result.aiScore}</div>
+                    </div>
+                </div>
+                
+                <h3 class="text-lg font-semibold mb-3">${result.title}</h3>
+                
+                ${result.image ? `<img src="${result.image}" alt="${result.title}" class="w-full rounded-lg mb-4">` : ''}
+                
+                <p class="text-gray-300 mb-4">${result.content}</p>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-400">${result.timestamp}</span>
+                        <span class="text-sm text-gray-400">•</span>
+                        <span class="text-sm text-gray-400">${AIPoweredSocial.formatNumber(result.engagement)} engagements</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Like">❤️</button>
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Share">🔄</button>
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Save">🔖</button>
+                    </div>
+                </div>
+            `;
+            
+            return resultDiv;
+        }
+        
+        function loadMoreContent() {
+            const btn = document.getElementById('loadMoreBtn');
+            btn.innerHTML = '<div class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-purple-500"></div> Loading...';
+            
+            setTimeout(() => {
+                const moreResults = generateMockResults().map(r => ({...r, id: r.id + 100}));
+                const container = document.getElementById('discoveryResults');
+                
+                moreResults.forEach(result => {
+                    const resultElement = createResultElement(result);
+                    container.appendChild(resultElement);
+                });
+                
+                btn.innerHTML = '<span data-translate="loadMore">Load More Content</span>';
+            }, 1500);
+        }
+        
+        function refreshTopics() {
+            const bubbles = document.querySelectorAll('.topic-bubble');
+            
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: bubbles,
+                    scale: [1, 0.8, 1],
+                    rotate: [0, 360],
+                    duration: 800,
+                    easing: 'easeOutBack',
+                    delay: anime.stagger(100)
+                });
+            }
+            
+            // Reset selections
+            bubbles.forEach(bubble => {
+                bubble.classList.remove('selected');
+            });
+            selectedTopics = [];
+        }
+        
+        function animateElements() {
+            if (typeof anime !== 'undefined') {
+                // Animate filter cards
+                anime({
+                    targets: '.glass-card',
+                    opacity: [0, 1],
+                    translateY: [30, 0],
+                    duration: 800,
+                    easing: 'easeOutQuart',
+                    delay: anime.stagger(200)
+                });
+                
+                // Animate topic bubbles
+                anime({
+                    targets: '.topic-bubble',
+                    scale: [0, 1],
+                    opacity: [0, 1],
+                    duration: 600,
+                    easing: 'easeOutBack',
+                    delay: anime.stagger(100, {start: 1000})
+                });
+            }
+        }
+    </script>
+</body>
+</html>

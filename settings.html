@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - NeuroConnect</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-purple: #6B46C1;
+            --primary-blue: #3B82F6;
+            --glass-white: rgba(255, 255, 255, 0.1);
+            --blur-amount: 20px;
+            --transition-speed: 0.3s;
+        }
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        body.rtl {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .glass-effect {
+            background: var(--glass-white);
+            backdrop-filter: blur(var(--blur-amount));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(107, 70, 193, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6B46C1, #3B82F6);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(107, 70, 193, 0.4);
+        }
+        
+        .settings-header {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(59, 130, 246, 0.1));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .settings-section {
+            margin-bottom: 3rem;
+        }
+        
+        .settings-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(4px);
+        }
+        
+        .ai-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .ai-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6B46C1, #3B82F6);
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(107, 70, 193, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .ai-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 20px rgba(107, 70, 193, 0.5);
+        }
+        
+        .ai-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6B46C1, #3B82F6);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 10px rgba(107, 70, 193, 0.3);
+        }
+        
+        .privacy-setting {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .privacy-setting:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .notification-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .theme-preview {
+            width: 60px;
+            height: 40px;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .theme-preview:hover {
+            transform: scale(1.1);
+        }
+        
+        .theme-preview.active {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 20px rgba(107, 70, 193, 0.5);
+        }
+        
+        .theme-light {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        }
+        
+        .theme-dark {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+        }
+        
+        .theme-auto {
+            background: linear-gradient(135deg, #6B46C1, #3B82F6);
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+        }
+        
+        .sidebar {
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .ai-level-indicator {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .level-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .level-basic {
+            background: rgba(239, 68, 68, 0.2);
+            color: #EF4444;
+        }
+        
+        .level-balanced {
+            background: rgba(245, 158, 11, 0.2);
+            color: #F59E0B;
+        }
+        
+        .level-advanced {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+        }
+        
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .floating-shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 10s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Floating Background Elements -->
+    <div class="floating-elements">
+        <div class="floating-shape w-12 h-12 bg-purple-500 rounded-full" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+        <div class="floating-shape w-8 h-8 bg-blue-500 rounded-lg" style="top: 60%; left: 85%; animation-delay: 3s;"></div>
+        <div class="floating-shape w-16 h-16 bg-indigo-500 rounded-full" style="top: 80%; left: 15%; animation-delay: 6s;"></div>
+        <div class="floating-shape w-10 h-10 bg-cyan-500 rounded-lg" style="top: 30%; left: 75%; animation-delay: 2s;"></div>
+        <div class="floating-shape w-14 h-14 bg-pink-500 rounded-full" style="top: 70%; left: 50%; animation-delay: 4s;"></div>
+    </div>
+    
+    <!-- Navigation Header -->
+    <nav class="glass-effect fixed top-0 left-0 right-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-lg">N</span>
+                </div>
+                <h1 class="text-xl font-bold gradient-text">NeuroConnect</h1>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navHome">Home</a>
+                <a href="explore.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navExplore">Explore AI</a>
+                <a href="worlds.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navWorlds">Worlds</a>
+                <a href="profile.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navProfile">Profile</a>
+                <a href="dashboard.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navDashboard">AI Dashboard</a>
+                <a href="settings.html" class="text-white hover:text-purple-400 transition-colors font-medium" data-translate="navSettings">Settings</a>
+            </div>
+            
+            <!-- Right Side Actions -->
+            <div class="flex items-center space-x-4">
+                <!-- Language Toggle -->
+                <button id="languageToggle" class="glass-effect px-3 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                    <span class="text-sm font-medium">EN/AR</span>
+                </button>
+                
+                <!-- AI Assistant -->
+                <button id="aiAssistant" class="glass-effect p-2 rounded-lg hover:bg-white/20 transition-colors relative">
+                    <img src="resources/ai-assistant.png" alt="AI Assistant" class="w-6 h-6">
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                </button>
+                
+                <!-- Save Settings -->
+                <button onclick="saveSettings()" class="btn-primary px-4 py-2 rounded-lg font-medium" data-translate="saveSettings">Save Changes</button>
+                
+                <!-- User Avatar -->
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-purple-500">
+                    <img src="resources/avatar-1.jpg" alt="User" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Settings Header -->
+    <section class="settings-header pt-24 pb-8 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold gradient-text mb-4">
+                <span id="settingsTitle"></span>
+            </h2>
+            <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto" data-translate="customizeYourExperience">
+                Customize your NeuroConnect experience with advanced AI controls and personalization options
+            </p>
+        </div>
+    </section>
+    
+    <!-- Main Settings Content -->
+    <main class="content-grid">
+        <!-- Left Sidebar - Settings Navigation -->
+        <aside class="sidebar">
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text">Settings</h3>
+                <nav class="space-y-2">
+                    <button class="settings-nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-colors active" data-section="ai-customization">
+                        <div class="flex items-center space-x-3">
+                            <span>🤖</span>
+                            <span>AI Customization</span>
+                        </div>
+                    </button>
+                    
+                    <button class="settings-nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" data-section="privacy">
+                        <div class="flex items-center space-x-3">
+                            <span>🔒</span>
+                            <span>Privacy & Security</span>
+                        </div>
+                    </button>
+                    
+                    <button class="settings-nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" data-section="notifications">
+                        <div class="flex items-center space-x-3">
+                            <span>🔔</span>
+                            <span>Notifications</span>
+                        </div>
+                    </button>
+                    
+                    <button class="settings-nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" data-section="appearance">
+                        <div class="flex items-center space-x-3">
+                            <span>🎨</span>
+                            <span>Appearance</span>
+                        </div>
+                    </button>
+                    
+                    <button class="settings-nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" data-section="language">
+                        <div class="flex items-center space-x-3">
+                            <span>🌐</span>
+                            <span>Language & Region</span>
+                        </div>
+                    </button>
+                    
+                    <button class="settings-nav-item w-full text-left px-4 py-3 rounded-lg hover:bg-white/10 transition-colors" data-section="account">
+                        <div class="flex items-center space-x-3">
+                            <span>👤</span>
+                            <span>Account</span>
+                        </div>
+                    </button>
+                </nav>
+            </div>
+        </aside>
+        
+        <!-- Main Settings Panel -->
+        <section class="space-y-8">
+            <!-- AI Customization Section -->
+            <div id="ai-customization" class="settings-section">
+                <div class="glass-card rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-6 gradient-text">AI Customization</h3>
+                    
+                    <!-- AI Level Slider -->
+                    <div class="settings-item">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="text-lg font-semibold mb-2">AI Assistance Level</h4>
+                                <p class="text-sm text-gray-400">Control how much AI helps with your experience</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <input type="range" min="0" max="100" value="60" class="ai-slider" id="aiLevelSlider" oninput="updateAILevel(this.value)">
+                        </div>
+                        
+                        <div class="ai-level-indicator">
+                            <span class="text-sm text-gray-400">Minimal</span>
+                            <div class="flex-1 mx-4">
+                                <div class="level-badge level-balanced" id="aiLevelBadge">Balanced</div>
+                            </div>
+                            <span class="text-sm text-gray-400">Maximum</span>
+                        </div>
+                        
+                        <div class="mt-4 p-4 bg-white/5 rounded-lg">
+                            <p class="text-sm text-gray-300" id="aiLevelDescription">
+                                <strong>Balanced Mode:</strong> AI provides smart recommendations and helps with content creation while maintaining your creative control.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Content Preferences -->
+                    <div class="settings-item">
+                        <h4 class="text-lg font-semibold mb-4">Content Preferences</h4>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">AI-Generated Content</p>
+                                    <p class="text-sm text-gray-400">Allow AI to create posts and content for you</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" id="aiContentToggle" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Smart Feed Curation</p>
+                                    <p class="text-sm text-gray-400">AI learns your preferences to show relevant content</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" id="smartFeedToggle" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Friend Recommendations</p>
+                                    <p class="text-sm text-gray-400">AI suggests people to connect with based on interests</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" id="friendRecommendationsToggle" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">World Recommendations</p>
+                                    <p class="text-sm text-gray-400">AI suggests communities based on your activity</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" id="worldRecommendationsToggle" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Learning -->
+                    <div class="settings-item">
+                        <h4 class="text-lg font-semibold mb-4">AI Learning Preferences</h4>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Learn from My Activity</p>
+                                    <p class="text-sm text-gray-400">AI analyzes your posts, likes, and comments</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" id="learningToggle" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Behavioral Analytics</p>
+                                    <p class="text-sm text-gray-400">Track interaction patterns to improve recommendations</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" id="analyticsToggle" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Privacy & Security Section -->
+            <div id="privacy" class="settings-section hidden">
+                <div class="glass-card rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-6 gradient-text">Privacy & Security</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="privacy-setting">
+                            <h4 class="text-lg font-semibold mb-4">Data Collection</h4>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Usage Analytics</p>
+                                        <p class="text-sm text-gray-400">Help improve the platform by sharing usage data</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Crash Reports</p>
+                                        <p class="text-sm text-gray-400">Send anonymous crash reports to help fix bugs</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="privacy-setting">
+                            <h4 class="text-lg font-semibold mb-4">Content Privacy</h4>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Public Profile</p>
+                                        <p class="text-sm text-gray-400">Allow others to find and view your profile</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Show Online Status</p>
+                                        <p class="text-sm text-gray-400">Let others see when you're online</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Activity Tracking</p>
+                                        <p class="text-sm text-gray-400">Allow AI to track your activity for better recommendations</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="privacy-setting">
+                            <h4 class="text-lg font-semibold mb-4">Security</h4>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Two-Factor Authentication</p>
+                                        <p class="text-sm text-gray-400">Add an extra layer of security to your account</p>
+                                    </div>
+                                    <button class="btn-primary px-4 py-2 rounded-lg text-sm" onclick="setup2FA()">Setup</button>
+                                </div>
+                                
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium">Login Notifications</p>
+                                        <p class="text-sm text-gray-400">Get notified when someone logs into your account</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notifications Section -->
+            <div id="notifications" class="settings-section hidden">
+                <div class="glass-card rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-6 gradient-text">Notifications</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="notification-item">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold">Push Notifications</h4>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                            <p class="text-sm text-gray-400">Receive notifications on your device</p>
+                        </div>
+                        
+                        <div class="notification-item">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold">Email Notifications</h4>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                            <p class="text-sm text-gray-400">Get updates via email</p>
+                        </div>
+                        
+                        <div class="notification-item">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold">AI Insights</h4>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                            <p class="text-sm text-gray-400">Receive AI-powered insights and recommendations</p>
+                        </div>
+                        
+                        <div class="notification-item">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold">World Activity</h4>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                            <p class="text-sm text-gray-400">Updates from your joined worlds</p>
+                        </div>
+                        
+                        <div class="notification-item">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold">Social Interactions</h4>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                            <p class="text-sm text-gray-400">Likes, comments, and new followers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Appearance Section -->
+            <div id="appearance" class="settings-section hidden">
+                <div class="glass-card rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-6 gradient-text">Appearance</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- Theme Selection -->
+                        <div class="settings-item">
+                            <h4 class="text-lg font-semibold mb-4">Theme</h4>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="text-center">
+                                    <div class="theme-preview theme-light active" onclick="selectTheme(this, 'light')"></div>
+                                    <p class="text-sm mt-2">Light</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="theme-preview theme-dark" onclick="selectTheme(this, 'dark')"></div>
+                                    <p class="text-sm mt-2">Dark</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="theme-preview theme-auto" onclick="selectTheme(this, 'auto')"></div>
+                                    <p class="text-sm mt-2">Auto</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Font Size -->
+                        <div class="settings-item">
+                            <h4 class="text-lg font-semibold mb-4">Font Size</h4>
+                            
+                            <div class="flex items-center space-x-4">
+                                <button class="glass-effect px-4 py-2 rounded-lg hover:bg-white/20 transition-colors" onclick="setFontSize('small')">Small</button>
+                                <button class="btn-primary px-4 py-2 rounded-lg" onclick="setFontSize('medium')">Medium</button>
+                                <button class="glass-effect px-4 py-2 rounded-lg hover:bg-white/20 transition-colors" onclick="setFontSize('large')">Large</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Animations -->
+                        <div class="settings-item">
+                            <h4 class="text-lg font-semibold mb-4">Animations</h4>
+                            
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Reduce Motion</p>
+                                    <p class="text-sm text-gray-400">Minimize animations for better accessibility</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" id="reduceMotionToggle">
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Language & Region Section -->
+            <div id="language" class="settings-section hidden">
+                <div class="glass-card rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-6 gradient-text">Language & Region</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="settings-item">
+                            <h4 class="text-lg font-semibold mb-4">Language</h4>
+                            
+                            <select class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+                                <option value="en">English</option>
+                                <option value="ar">العربية</option>
+                                <option value="es">Español</option>
+                                <option value="fr">Français</option>
+                                <option value="de">Deutsch</option>
+                                <option value="zh">中文</option>
+                                <option value="ja">日本語</option>
+                            </select>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <h4 class="text-lg font-semibold mb-4">Region</h4>
+                            
+                            <select class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+                                <option value="us">United States</option>
+                                <option value="uk">United Kingdom</option>
+                                <option value="ca">Canada</option>
+                                <option value="au">Australia</option>
+                                <option value="de">Germany</option>
+                                <option value="fr">France</option>
+                                <option value="jp">Japan</option>
+                                <option value="sa">Saudi Arabia</option>
+                            </select>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <h4 class="text-lg font-semibold mb-4">Time Zone</h4>
+                            
+                            <select class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+                                <option value="EST">Eastern Standard Time (EST)</option>
+                                <option value="PST">Pacific Standard Time (PST)</option>
+                                <option value="GMT">Greenwich Mean Time (GMT)</option>
+                                <option value="CET">Central European Time (CET)</option>
+                                <option value="JST">Japan Standard Time (JST)</option>
+                                <option value="AEST">Australian Eastern Standard Time (AEST)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Account Section -->
+            <div id="account" class="settings-section hidden">
+                <div class="glass-card rounded-xl p-8">
+                    <h3 class="text-2xl font-bold mb-6 gradient-text">Account</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="settings-item">
+                            <h4 class="text-lg font-semibold mb-4">Account Information</h4>
+                            
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Full Name</label>
+                                    <input type="text" value="Sarah Chen" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Username</label>
+                                    <input type="text" value="sarah_chen" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Email</label>
+                                    <input type="email" value="sarah@example.com" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Phone</label>
+                                    <input type="tel" value="+1 (555) 123-4567" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <h4 class="text-lg font-semibold mb-4">Password & Security</h4>
+                            
+                            <div class="space-y-4">
+                                <button class="w-full glass-effect px-4 py-3 rounded-lg hover:bg-white/20 transition-colors text-left" onclick="changePassword()">
+                                    <div class="flex items-center justify-between">
+                                        <span>Change Password</span>
+                                        <span>→</span>
+                                    </div>
+                                </button>
+                                
+                                <button class="w-full glass-effect px-4 py-3 rounded-lg hover:bg-white/20 transition-colors text-left" onclick="downloadData()">
+                                    <div class="flex items-center justify-between">
+                                        <span>Download My Data</span>
+                                        <span>→</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <h4 class="text-lg font-semibold mb-4">Account Actions</h4>
+                            
+                            <div class="space-y-4">
+                                <button class="w-full glass-effect px-4 py-3 rounded-lg hover:bg-white/20 transition-colors text-left text-red-400" onclick="deactivateAccount()">
+                                    <div class="flex items-center justify-between">
+                                        <span>Deactivate Account</span>
+                                        <span>→</span>
+                                    </div>
+                                </button>
+                                
+                                <button class="w-full glass-effect px-4 py-3 rounded-lg hover:bg-white/20 transition-colors text-left text-red-400" onclick="deleteAccount()">
+                                    <div class="flex items-center justify-between">
+                                        <span>Delete Account</span>
+                                        <span>→</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- AI Chat Container -->
+    <div id="aiChatContainer" class="fixed bottom-6 right-6 w-80 h-96 glass-card rounded-xl p-4 hidden z-40">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+                <img src="resources/ai-assistant.png" alt="AI" class="w-8 h-8 rounded-full">
+                <h4 class="font-semibold" data-translate="aiAssistant">AI Assistant</h4>
+            </div>
+            <button onclick="AIPoweredSocial.toggleAIChat()" class="text-gray-400 hover:text-white">✕</button>
+        </div>
+        <div id="aiChatMessages" class="h-64 overflow-y-auto mb-4 space-y-2">
+            <!-- Chat messages will be added here -->
+        </div>
+        <div class="flex space-x-2">
+            <input 
+                type="text" 
+                id="chatInput"
+                class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-500"
+                placeholder="Ask me anything..."
+            >
+            <button class="btn-primary px-4 py-2 rounded-lg text-sm">Send</button>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="glass-effect mt-16 py-8 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-3 mb-4">
+                <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold">N</span>
+                </div>
+                <h3 class="text-lg font-bold gradient-text">NeuroConnect</h3>
+            </div>
+            <p class="text-gray-400 text-sm">
+                © 2024 NeuroConnect. Your privacy and security are our top priorities.
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="main.js"></script>
+    <script>
+        let currentSection = 'ai-customization';
+        let currentTheme = 'dark';
+        let currentFontSize = 'medium';
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSettingsPage();
+            setupEventListeners();
+            animateElements();
+        });
+        
+        function initializeSettingsPage() {
+            // Initialize typewriter effect for title
+            const settingsTitle = new Typed('#settingsTitle', {
+                strings: [
+                    'Settings',
+                    'Preferences',
+                    'Customization',
+                    'Configuration'
+                ],
+                typeSpeed: 80,
+                backSpeed: 40,
+                backDelay: 2000,
+                loop: true,
+                showCursor: true,
+                cursorChar: '|'
+            });
+            
+            // Initialize AI chat
+            AIPoweredSocial.initializeAIChat();
+            
+            // Set initial AI level
+            updateAILevel(60);
+        }
+        
+        function setupEventListeners() {
+            // Settings navigation
+            document.querySelectorAll('.settings-nav-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const section = e.target.closest('.settings-nav-item').getAttribute('data-section');
+                    showSection(section);
+                });
+            });
+        }
+        
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.settings-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+            
+            currentSection = sectionId;
+            
+            // Animate section change
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: `#${sectionId}`,
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    duration: 400,
+                    easing: 'easeOutQuart'
+                });
+            }
+        }
+        
+        function updateAILevel(value) {
+            const badge = document.getElementById('aiLevelBadge');
+            const description = document.getElementById('aiLevelDescription');
+            
+            const levels = {
+                basic: {
+                    range: [0, 33],
+                    name: 'Basic',
+                    class: 'level-basic',
+                    description: '<strong>Basic Mode:</strong> Minimal AI assistance. You maintain full control with occasional smart suggestions.'
+                },
+                balanced: {
+                    range: [34, 66],
+                    name: 'Balanced',
+                    class: 'level-balanced',
+                    description: '<strong>Balanced Mode:</strong> AI provides smart recommendations and helps with content creation while maintaining your creative control.'
+                },
+                advanced: {
+                    range: [67, 100],
+                    name: 'Advanced',
+                    class: 'level-advanced',
+                    description: '<strong>Advanced Mode:</strong> Maximum AI assistance with proactive recommendations, automated content optimization, and intelligent automation.'
+                }
+            };
+            
+            let currentLevel = 'basic';
+            for (const [key, level] of Object.entries(levels)) {
+                if (value >= level.range[0] && value <= level.range[1]) {
+                    currentLevel = key;
+                    break;
+                }
+            }
+            
+            const levelData = levels[currentLevel];
+            badge.textContent = levelData.name;
+            badge.className = `level-badge ${levelData.class}`;
+            description.innerHTML = levelData.description;
+        }
+        
+        function selectTheme(element, theme) {
+            // Remove active class from all theme previews
+            document.querySelectorAll('.theme-preview').forEach(preview => {
+                preview.classList.remove('active');
+            });
+            
+            // Add active class to selected theme
+            element.classList.add('active');
+            currentTheme = theme;
+            
+            // Apply theme (in a real app, this would change the CSS)
+            document.body.classList.remove('theme-light', 'theme-dark', 'theme-auto');
+            document.body.classList.add(`theme-${theme}`);
+            
+            // Animate selection
+            if (typeof anime !== 'undefined') {
+                anime({
+                    targets: element,
+                    scale: [1, 1.1, 1],
+                    duration: 300,
+                    easing: 'easeOutBack'
+                });
+            }
+        }
+        
+        function setFontSize(size) {
+            currentFontSize = size;
+            
+            // Update button states
+            document.querySelectorAll('[onclick*="setFontSize"]').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('glass-effect');
+            });
+            
+            event.target.classList.remove('glass-effect');
+            event.target.classList.add('btn-primary');
+            
+            // Apply font size (in a real app, this would change the CSS)
+            document.documentElement.style.fontSize = {
+                small: '14px',
+                medium: '16px',
+                large: '18px'
+            }[size];
+        }
+        
+        function setup2FA() {
+            alert('Two-factor authentication setup would open here (This is a demo)');
+        }
+        
+        function changePassword() {
+            alert('Password change modal would open here (This is a demo)');
+        }
+        
+        function downloadData() {
+            alert('Data download would start here (This is a demo)');
+        }
+        
+        function deactivateAccount() {
+            if (confirm('Are you sure you want to deactivate your account?')) {
+                alert('Account deactivation process would begin here (This is a demo)');
+            }
+        }
+        
+        function deleteAccount() {
+            if (confirm('Are you sure you want to permanently delete your account? This action cannot be undone.')) {
+                alert('Account deletion process would begin here (This is a demo)');
+            }
+        }
+        
+        function saveSettings() {
+            // Simulate saving settings
+            const btn = event.target;
+            const originalText = btn.textContent;
+            
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            
+            setTimeout(() => {
+                btn.textContent = 'Saved!';
+                btn.classList.add('bg-green-500');
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('bg-green-500');
+                    btn.disabled = false;
+                }, 2000);
+            }, 1000);
+            
+            // Show AI feedback
+            AIPoweredSocial.addAIMessage('Your settings have been saved! The AI will adjust its behavior based on your new preferences.');
+        }
+        
+        function animateElements() {
+            if (typeof anime !== 'undefined') {
+                // Animate settings items
+                anime({
+                    targets: '.settings-item',
+                    opacity: [0, 1],
+                    translateX: [-30, 0],
+                    duration: 600,
+                    easing: 'easeOutQuart',
+                    delay: anime.stagger(100, {start: 300})
+                });
+                
+                // Animate navigation items
+                anime({
+                    targets: '.settings-nav-item',
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    duration: 400,
+                    easing: 'easeOutQuart',
+                    delay: anime.stagger(50)
+                });
+            }
+        }
+    </script>
+</body>
+</html>

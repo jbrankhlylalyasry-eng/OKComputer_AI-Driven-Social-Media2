@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroConnect - AI-Powered Social Platform</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/splitting@1.0.6/dist/splitting.css">
+    <script src="https://unpkg.com/splitting@1.0.6/dist/splitting.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-purple: #6B46C1;
+            --primary-blue: #3B82F6;
+            --glass-white: rgba(255, 255, 255, 0.1);
+            --blur-amount: 20px;
+            --transition-speed: 0.3s;
+        }
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        body.rtl {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .glass-effect {
+            background: var(--glass-white);
+            backdrop-filter: blur(var(--blur-amount));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-blue));
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all var(--transition-speed) ease;
+        }
+        
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(107, 70, 193, 0.2);
+        }
+        
+        .ai-pulse {
+            animation: aiPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes aiPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .hero-bg {
+            background-image: url('resources/hero-ai.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1rem;
+            }
+        }
+        
+        .sidebar {
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .feed-container {
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(107, 70, 193, 0.5) transparent;
+        }
+        
+        .feed-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .feed-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .feed-container::-webkit-scrollbar-thumb {
+            background: rgba(107, 70, 193, 0.5);
+            border-radius: 3px;
+        }
+        
+        .post-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px rgba(107, 70, 193, 0.25);
+        }
+        
+        .ai-indicator {
+            background: linear-gradient(45deg, #6B46C1, #3B82F6);
+            border-radius: 50%;
+            width: 8px;
+            height: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        .engagement-bar {
+            background: linear-gradient(90deg, #6B46C1, #3B82F6);
+            height: 4px;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .modal-backdrop {
+            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #6B46C1, #3B82F6);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(107, 70, 193, 0.4);
+        }
+        
+        .trending-tag {
+            background: rgba(107, 70, 193, 0.2);
+            border: 1px solid rgba(107, 70, 193, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .trending-tag:hover {
+            background: rgba(107, 70, 193, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .world-preview {
+            transition: all 0.3s ease;
+        }
+        
+        .world-preview:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Navigation Header -->
+    <nav class="glass-effect fixed top-0 left-0 right-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-lg">N</span>
+                </div>
+                <h1 class="text-xl font-bold gradient-text">NeuroConnect</h1>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-white hover:text-purple-400 transition-colors font-medium" data-translate="navHome">Home</a>
+                <a href="explore.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navExplore">Explore AI</a>
+                <a href="worlds.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navWorlds">Worlds</a>
+                <a href="profile.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navProfile">Profile</a>
+                <a href="dashboard.html" class="text-gray-300 hover:text-purple-400 transition-colors" data-translate="navDashboard">AI Dashboard</a>
+            </div>
+            
+            <!-- Right Side Actions -->
+            <div class="flex items-center space-x-4">
+                <!-- Language Toggle -->
+                <button id="languageToggle" class="glass-effect px-3 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                    <span class="text-sm font-medium">EN/AR</span>
+                </button>
+                
+                <!-- AI Assistant -->
+                <button id="aiAssistant" class="glass-effect p-2 rounded-lg hover:bg-white/20 transition-colors relative">
+                    <img src="resources/ai-assistant.png" alt="AI Assistant" class="w-6 h-6 ai-pulse">
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+                </button>
+                
+                <!-- Create Post -->
+                <button id="createPostBtn" class="btn-primary px-4 py-2 rounded-lg font-medium" data-translate="createPost">
+                    Create Post
+                </button>
+                
+                <!-- User Avatar -->
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-purple-500">
+                    <img src="resources/avatar-1.jpg" alt="User" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero-bg pt-24 pb-16 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-5xl md:text-7xl font-bold mb-6 gradient-text floating">
+                <span id="heroText"></span>
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto" data-translate="heroDescription">
+                Experience the future of social networking with AI-powered content curation, intelligent matchmaking, and immersive digital worlds.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="btn-primary px-8 py-4 rounded-lg font-semibold text-lg" data-translate="exploreNow">
+                    Explore Now
+                </button>
+                <button class="glass-effect px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white/20 transition-colors" data-translate="learnMore">
+                    Learn More
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content Grid -->
+    <main class="content-grid page-content">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <!-- Trending Topics -->
+            <div class="glass-card rounded-xl p-6 mb-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text" data-translate="trendingTopics">Trending Topics</h3>
+                <div class="space-y-2">
+                    <div class="trending-tag px-3 py-2 rounded-lg text-sm cursor-pointer">#AIArt</div>
+                    <div class="trending-tag px-3 py-2 rounded-lg text-sm cursor-pointer">#FutureTech</div>
+                    <div class="trending-tag px-3 py-2 rounded-lg text-sm cursor-pointer">#DigitalInnovation</div>
+                    <div class="trending-tag px-3 py-2 rounded-lg text-sm cursor-pointer">#SmartCommunities</div>
+                    <div class="trending-tag px-3 py-2 rounded-lg text-sm cursor-pointer">#TechEthics</div>
+                </div>
+            </div>
+            
+            <!-- AI Insights -->
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text" data-translate="insights">AI Insights</h3>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-purple-500 pl-4">
+                        <p class="text-sm text-gray-300">Your content engagement is up 23% this week!</p>
+                        <div class="engagement-bar mt-2" style="width: 75%"></div>
+                    </div>
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <p class="text-sm text-gray-300">AI recommends posting between 2-4 PM for maximum reach.</p>
+                        <div class="engagement-bar mt-2" style="width: 90%"></div>
+                    </div>
+                    <div class="border-l-4 border-purple-500 pl-4">
+                        <p class="text-sm text-gray-300">3 new worlds match your interests.</p>
+                        <div class="engagement-bar mt-2" style="width: 60%"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Feed -->
+        <section class="feed-container">
+            <!-- Create Post Card -->
+            <div class="glass-card rounded-xl p-6 mb-6">
+                <div class="flex items-center space-x-4 mb-4">
+                    <img src="resources/avatar-1.jpg" alt="You" class="w-12 h-12 rounded-full">
+                    <div class="flex-1">
+                        <textarea 
+                            id="quickPostInput"
+                            class="w-full bg-transparent border border-white/20 rounded-lg p-3 text-white placeholder-gray-400 resize-none focus:outline-none focus:border-purple-500"
+                            rows="3"
+                            placeholder="Share your thoughts with AI enhancement..."
+                            data-translate="writeSomething"
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex space-x-2">
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Add Image">📷</button>
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Add Video">🎥</button>
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Add Poll">📊</button>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="AIPoweredSocial.generatePostWithAI()" class="glass-effect px-4 py-2 rounded-lg hover:bg-white/20 transition-colors text-sm" data-translate="generateWithAI">
+                            ✨ Generate with AI
+                        </button>
+                        <button class="btn-primary px-6 py-2 rounded-lg font-medium" data-translate="createPost">
+                            Post
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feed Posts -->
+            <div id="feedPosts" class="space-y-6">
+                <!-- Posts will be dynamically loaded here -->
+            </div>
+            
+            <!-- Load More Button -->
+            <div class="text-center mt-8">
+                <button class="glass-effect px-8 py-3 rounded-lg hover:bg-white/20 transition-colors" onclick="loadMorePosts()">
+                    Load More Posts
+                </button>
+            </div>
+        </section>
+        
+        <!-- Right Sidebar -->
+        <aside class="sidebar">
+            <!-- Recommended Worlds -->
+            <div class="glass-card rounded-xl p-6 mb-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text" data-translate="recommendedForYou">Recommended for You</h3>
+                <div class="space-y-4">
+                    <div class="world-preview glass-effect rounded-lg p-4 cursor-pointer">
+                        <img src="resources/world-1.jpg" alt="World" class="w-full h-20 object-cover rounded-lg mb-3">
+                        <h4 class="font-medium text-sm mb-1">Tech Innovators</h4>
+                        <p class="text-xs text-gray-400 mb-2">15,420 members</p>
+                        <button class="w-full btn-primary py-2 rounded-lg text-sm" data-translate="joinWorld">Join World</button>
+                    </div>
+                    <div class="world-preview glass-effect rounded-lg p-4 cursor-pointer">
+                        <img src="resources/world-2.jpg" alt="World" class="w-full h-20 object-cover rounded-lg mb-3">
+                        <h4 class="font-medium text-sm mb-1">Creative Studio</h4>
+                        <p class="text-xs text-gray-400 mb-2">8,930 members</p>
+                        <button class="w-full btn-primary py-2 rounded-lg text-sm" data-translate="joinWorld">Join World</button>
+                    </div>
+                    <div class="world-preview glass-effect rounded-lg p-4 cursor-pointer">
+                        <img src="resources/world-3.jpg" alt="World" class="w-full h-20 object-cover rounded-lg mb-3">
+                        <h4 class="font-medium text-sm mb-1">Future Thinkers</h4>
+                        <p class="text-xs text-gray-400 mb-2">9,870 members</p>
+                        <button class="w-full btn-primary py-2 rounded-lg text-sm" data-translate="joinWorld">Join World</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Active Users -->
+            <div class="glass-card rounded-xl p-6">
+                <h3 class="text-lg font-semibold mb-4 gradient-text">Active Now</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="relative">
+                            <img src="resources/avatar-2.jpg" alt="User" class="w-8 h-8 rounded-full">
+                            <span class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">Alex Rivera</p>
+                            <p class="text-xs text-gray-400">Creating digital art</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="relative">
+                            <img src="resources/avatar-3.jpg" alt="User" class="w-8 h-8 rounded-full">
+                            <span class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">Jordan Kim</p>
+                            <p class="text-xs text-gray-400">Developing AI tools</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </main>
+    
+    <!-- AI Chat Container -->
+    <div id="aiChatContainer" class="fixed bottom-6 right-6 w-80 h-96 glass-card rounded-xl p-4 hidden z-40">
+        <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+                <img src="resources/ai-assistant.png" alt="AI" class="w-8 h-8 rounded-full">
+                <h4 class="font-semibold" data-translate="aiAssistant">AI Assistant</h4>
+            </div>
+            <button onclick="AIPoweredSocial.toggleAIChat()" class="text-gray-400 hover:text-white">✕</button>
+        </div>
+        <div id="aiChatMessages" class="h-64 overflow-y-auto mb-4 space-y-2">
+            <!-- Chat messages will be added here -->
+        </div>
+        <div class="flex space-x-2">
+            <input 
+                type="text" 
+                id="chatInput"
+                class="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-500"
+                placeholder="Ask me anything..."
+            >
+            <button class="btn-primary px-4 py-2 rounded-lg text-sm">Send</button>
+        </div>
+    </div>
+    
+    <!-- Post Creator Modal -->
+    <div id="postCreatorModal" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center">
+        <div class="modal-content rounded-xl p-6 w-full max-w-2xl mx-4">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-semibold gradient-text" data-translate="createPost">Create Post</h3>
+                <button onclick="AIPoweredSocial.closePostCreator()" class="text-gray-400 hover:text-white text-xl">✕</button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="flex items-center space-x-4">
+                    <img src="resources/avatar-1.jpg" alt="You" class="w-12 h-12 rounded-full">
+                    <div>
+                        <p class="font-medium">Sarah Chen</p>
+                        <p class="text-sm text-gray-400">Sharing to your feed</p>
+                    </div>
+                </div>
+                
+                <textarea 
+                    id="postContent"
+                    class="w-full bg-white/10 border border-white/20 rounded-lg p-4 text-white placeholder-gray-400 resize-none focus:outline-none focus:border-purple-500"
+                    rows="6"
+                    placeholder="What's on your mind? Let AI help you create something amazing..."
+                ></textarea>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex space-x-2">
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Add Image">📷</button>
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Add Video">🎥</button>
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Add Poll">📊</button>
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Add Location">📍</button>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="AIPoweredSocial.generatePostWithAI()" class="glass-effect px-6 py-2 rounded-lg hover:bg-white/20 transition-colors">
+                            ✨ Generate with AI
+                        </button>
+                        <button class="btn-primary px-8 py-2 rounded-lg font-medium">
+                            Share Post
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="glass-effect mt-16 py-8 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-3 mb-4">
+                <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold">N</span>
+                </div>
+                <h3 class="text-lg font-bold gradient-text">NeuroConnect</h3>
+            </div>
+            <p class="text-gray-400 text-sm">
+                © 2024 NeuroConnect. Empowering human connection through artificial intelligence.
+            </p>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="main.js"></script>
+    <script>
+        // Initialize hero text animation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Typewriter effect for hero text
+            const heroText = new Typed('#heroText', {
+                strings: [
+                    'Welcome to the Future',
+                    'AI-Powered Connections',
+                    'Intelligent Social Network',
+                    'Your Digital Journey Starts Here'
+                ],
+                typeSpeed: 80,
+                backSpeed: 40,
+                backDelay: 2000,
+                loop: true,
+                showCursor: true,
+                cursorChar: '|'
+            });
+            
+            // Load initial posts
+            loadFeedPosts();
+            
+            // Setup scroll animations
+            setupScrollAnimations();
+            
+            // Initialize AI chat
+            setupAIChat();
+        });
+        
+        // Load feed posts
+        function loadFeedPosts() {
+            const feedContainer = document.getElementById('feedPosts');
+            const posts = AIPoweredSocial.mockData.posts;
+            
+            posts.forEach((post, index) => {
+                const user = AIPoweredSocial.mockData.users.find(u => u.id === post.userId);
+                const postElement = createPostElement(post, user);
+                feedContainer.appendChild(postElement);
+                
+                // Animate post appearance
+                setTimeout(() => {
+                    postElement.classList.add('scroll-reveal', 'revealed');
+                }, index * 200);
+            });
+        }
+        
+        // Create post element
+        function createPostElement(post, user) {
+            const postDiv = document.createElement('div');
+            postDiv.className = 'glass-card rounded-xl p-6 post-card scroll-reveal';
+            
+            postDiv.innerHTML = `
+                <div class="flex items-start space-x-4 mb-4">
+                    <img src="${user.avatar}" alt="${user.name}" class="w-12 h-12 rounded-full">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <h4 class="font-semibold">${user.name}</h4>
+                            <div class="ai-indicator" title="AI Enhanced Content"></div>
+                            <span class="text-sm text-gray-400">${post.timestamp}</span>
+                        </div>
+                        <div class="flex space-x-2 mb-2">
+                            ${post.tags.map(tag => `<span class="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-gray-400">AI Score</div>
+                        <div class="text-sm font-medium gradient-text">${post.aiScore}</div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-gray-200 mb-4">${post.content}</p>
+                    ${post.image ? `<img src="${post.image}" alt="Post content" class="w-full rounded-lg mb-4">` : ''}
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-6">
+                        <button class="flex items-center space-x-2 hover:text-purple-400 transition-colors">
+                            <span>❤️</span>
+                            <span class="text-sm">${AIPoweredSocial.formatNumber(post.likes)}</span>
+                        </button>
+                        <button class="flex items-center space-x-2 hover:text-blue-400 transition-colors">
+                            <span>💬</span>
+                            <span class="text-sm">${AIPoweredSocial.formatNumber(post.comments)}</span>
+                        </button>
+                        <button class="flex items-center space-x-2 hover:text-green-400 transition-colors">
+                            <span>🔄</span>
+                            <span class="text-sm">${AIPoweredSocial.formatNumber(post.shares)}</span>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="AI Insights">
+                            <span class="text-sm">🤖</span>
+                        </button>
+                        <button class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Save post">
+                            <span class="text-sm">🔖</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return postDiv;
+        }
+        
+        // Load more posts
+        function loadMorePosts() {
+            // Simulate loading more posts
+            const feedContainer = document.getElementById('feedPosts');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'text-center py-8';
+            loadingDiv.innerHTML = '<div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>';
+            feedContainer.appendChild(loadingDiv);
+            
+            setTimeout(() => {
+                loadingDiv.remove();
+                // Add more mock posts
+                const newPosts = [
+                    {
+                        id: 4,
+                        userId: 2,
+                        content: 'The AI content recommendation system here is absolutely brilliant! It understands my preferences better than I do sometimes. 🤖✨',
+                        image: null,
+                        likes: 89,
+                        comments: 23,
+                        shares: 5,
+                        timestamp: '8 hours ago',
+                        aiScore: 0.91,
+                        tags: ['AI', 'Technology']
+                    }
+                ];
+                
+                newPosts.forEach((post, index) => {
+                    const user = AIPoweredSocial.mockData.users.find(u => u.id === post.userId);
+                    const postElement = createPostElement(post, user);
+                    feedContainer.appendChild(postElement);
+                    
+                    setTimeout(() => {
+                        postElement.classList.add('scroll-reveal', 'revealed');
+                    }, index * 200);
+                });
+            }, 1500);
+        }
+        
+        // Setup scroll animations
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+            
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                observer.observe(el);
+            });
+        }
+        
+        // Setup AI Chat
+        function setupAIChat() {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const message = e.target.value.trim();
+                        if (message) {
+                            // Add user message
+                            const chatMessages = document.getElementById('aiChatMessages');
+                            const userMessage = document.createElement('div');
+                            userMessage.className = 'user-message bg-blue-500/20 p-3 rounded-lg mb-2 ml-auto max-w-xs';
+                            userMessage.innerHTML = `<p class="text-sm text-white">${message}</p>`;
+                            chatMessages.appendChild(userMessage);
+                            
+                            // Clear input
+                            e.target.value = '';
+                            
+                            // Simulate AI response
+                            setTimeout(() => {
+                                const responses = [
+                                    'That\'s an interesting perspective! Based on your interests, I can recommend some relevant worlds and users for you to connect with.',
+                                    'I\'ve analyzed your query and found several related discussions happening in different worlds. Would you like me to show you the most relevant ones?',
+                                    'Great question! The AI algorithms on this platform are designed to enhance human connection while maintaining authenticity. Let me show you some examples.',
+                                    'I can help you with that! Our AI-powered search can find content, people, and worlds that match your interests perfectly.'
+                                ];
+                                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                                AIPoweredSocial.addAIMessage(randomResponse);
+                            }, 1000);
+                            
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Quick post functionality
+        document.getElementById('quickPostInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                const content = e.target.value.trim();
+                if (content) {
+                    // Simulate posting
+                    alert('Post created! (This is a demo)');
+                    e.target.value = '';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
